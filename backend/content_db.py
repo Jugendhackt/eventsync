@@ -14,10 +14,10 @@ def main():
                     deleteAfter INT,
                     time TEXT,
                     website TEXT,
-                    tags: kommt noch ihr wichser! ihr könnt mich alle mal!
+                    tags TEXT,
                     description TEXT,
                     createTime TEXT DEFAULT CURRENT_TIMESTAMP,
-                    id: TEXT
+                    id TEXT
                 )
                 """)
 
