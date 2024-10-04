@@ -2,14 +2,13 @@ import csv
 import requests
 import os.path
 
+rows = []
+
 filename = "datatemp.csv"
 if not os.path.isfile(filename):
     filename = "../" + filename # If the file doesn't exist in the current working directory, check the parent directory instead.
-
-rows = []
-
+    
 with open(filename, 'r') as csvfile:
-    # creating a csv reader object
     csvreader = csv.reader(csvfile)
     next(csvreader)
 
