@@ -1,12 +1,14 @@
 from fastapi import FastAPI
-from event import Event
+from uuid import uuid4
+
+from sqlite_handler import SQLiteHandler
 
 
 app = FastAPI()
 
+
 @app.get("/events")
 def read_root():
-    return [Event(1, 4, "test")]
-
-
-# json object of all events
+    with SQLiteHandler() as cur:
+        cur.execute("SELECT * FROM events")
+        return cur.fetchall()
