@@ -37,7 +37,7 @@ export default function Home() {
   useEffect(() => {
     api.read().then((data) => {
 
-      setData(data);
+     // setData(data);
       setLoading(false);
       setError(null);
     }).catch((error) => {
@@ -46,9 +46,13 @@ export default function Home() {
       setError(error);
     });
 
-
-   // setData(JSON.parse(window.localStorage.getItem('data') ?? '[]') satisfies MapEvent[]);
+    loadData();
+    
   }, []);
+
+  function loadData() {
+    setData(JSON.parse(window.localStorage.getItem('data') ?? '[]') satisfies MapEvent[]);
+  }
 
   return (
     <div className="w-full h-screen flex flex-col">
@@ -68,12 +72,10 @@ export default function Home() {
               <DialogHeader>
                 <DialogTitle>Neuen Eintrag hinzufügen</DialogTitle>
                 <DialogDescription>
-                  <CreateNewForm />
+                  <CreateNewForm reloadCallback={loadData} />
                 </DialogDescription>
               </DialogHeader>
-              <DialogFooter>
-                <Button type="submit" className='mt-2'>Speichern</Button>
-              </DialogFooter>
+              
             </DialogContent>
           </Dialog>
 
@@ -98,11 +100,12 @@ export default function Home() {
           <Map position={[52.52476, 13.4041008]} zoom={13}>
             {
               data.map((event) => (
-                <Marker position={[52.52476, 13.4041008]}>
+                <Marker key={event.id} position={[event.lat, event.lon]}>
                   <Popup>
-                    <div key={event.id} className="w-full h-20 bg-slate-50 flex flex-row pl-10 pr-10 justify-between items-center">
+                    <div  className="w-full flex flex-col pl-10 pr-10 ">
                       <p className="text-xl font-bold">{event.name}</p>
                       <p>{event.location}</p>
+                      <p>{event.hrtime}</p>
                     </div>
                   </Popup>
                 </Marker>
