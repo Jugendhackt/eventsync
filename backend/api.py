@@ -17,9 +17,14 @@ app.add_middleware(
 
 
 @app.get("/events")
-def read_root():
+def read_root(search_filter):
+    search_filter = json_loads(search_filter)
+    command = "SELECT * FROM events"
+    for key, item in enumerate(search_filter):
+        command += f" WHERE {key} = '{item}'"
+
     with SQLiteHandler() as cur:
-        cur.execute("SELECT * FROM events")
+        cur.execute(command)
         return cur.fetchall()
 
 
