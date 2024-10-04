@@ -16,7 +16,6 @@ class ContentDBInit:
                     name TEXT,
                     author TEXT,
                     description TEXT,
-                    type INTEGER,
                     create_time TEXT DEFAULT CURRENT_TIMESTAMP,
                     delete_after TEXT,
                     time TEXT,
