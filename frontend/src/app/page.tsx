@@ -17,8 +17,9 @@ import {
 } from "@/components/ui/dialog"
 import { CreateNewForm } from '@/components/CreateNewForm';
 import { api } from '@/api/api';
-import { MapEvent } from '@/models/event';
-
+import { loadDataFromDrizzle } from '@/server/dbAccess';
+import { MapEvent } from '@/server/schema';
+import { LOAD_DATA_FROM_API } from '@/dataSource';
 
 export default function Home() {
 
@@ -33,26 +34,35 @@ export default function Home() {
   const [data, setData] = useState<MapEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [openNewDialog, setOpenNewDialog] = useState(false);
 
   useEffect(() => {
-    api.read().then((data) => {
-
-     // setData(data);
-      setLoading(false);
-      setError(null);
-    }).catch((error) => {
-      console.error(error);
-      setLoading(false);
-      setError(error);
-    });
-
     loadData();
-    
   }, []);
 
   function loadData() {
-    setData(JSON.parse(window.localStorage.getItem('data') ?? '[]') satisfies MapEvent[]);
+    if(LOAD_DATA_FROM_API) {
+      api.read().then((data) => {
+
+         setData(data);
+         setLoading(false);
+         setError(null);
+       }).catch((error) => {
+         console.error(error);
+         setLoading(false);
+         setError(error);
+       });
+    }else{
+      loadDataFromDrizzle().then((data) => {
+        setData(data);
+        setLoading(false);
+        console.log(data);
+      });
+    }
+    setOpenNewDialog(false);
   }
+
+
 
   return (
     <div className="w-full h-screen flex flex-col">
@@ -66,8 +76,8 @@ export default function Home() {
         }
 
         <div>
-          <Dialog>
-            <DialogTrigger><Button variant="outline">Neuer Eintrag</Button></DialogTrigger>
+          <Dialog open={openNewDialog}>
+            <DialogTrigger><Button onClick={()=>setOpenNewDialog(true)} variant="outline">Neuer Eintrag</Button></DialogTrigger>
             <DialogContent className='h-2/3 overflow-scroll'>
               <DialogHeader>
                 <DialogTitle>Neuen Eintrag hinzufügen</DialogTitle>

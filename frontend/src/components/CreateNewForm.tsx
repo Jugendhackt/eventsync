@@ -28,7 +28,10 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { TagInput } from "./tag-input";
-import { MapEvent } from "@/models/event";
+import { MapEvent } from "@/server/schema";
+import { addEventToDrizzle } from "@/server/dbAccess";
+import { v4 as uuidv4 } from 'uuid';
+import { LOAD_DATA_FROM_API } from "@/dataSource";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -40,7 +43,7 @@ const formSchema = z.object({
     hrtime: z.string().max(50).optional(),
     time: z.date().optional(),
     deleteAfter: z.boolean(),
-    tags: z.array(z.string()).max(5),
+    tags: z.string().min(2).max(50),
     website: z.string().min(2).max(50),
 })
 
@@ -59,7 +62,7 @@ export function CreateNewForm(props: {reloadCallback: () => void}) {
             time: new Date(),
             deleteAfter: false,
             website: "",
-            tags: [],
+            tags: "",
 
         },
     })
@@ -68,8 +71,20 @@ export function CreateNewForm(props: {reloadCallback: () => void}) {
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        const currentData = JSON.parse(window.localStorage.getItem('data') ?? '[]') as MapEvent[];
-        window.localStorage.setItem('data', JSON.stringify([...currentData, values]));
+
+        if(LOAD_DATA_FROM_API) {
+            //TODO: Implement API call
+        }else{
+            addEventToDrizzle({
+                ...values,
+                createTime: new Date().toISOString(),
+                id: uuidv4(),
+                hrtime: values.hrtime || null,
+                time: values.time?.toISOString() || null
+            });
+        }
+       
+
         props.reloadCallback();
         console.log(values)
     }

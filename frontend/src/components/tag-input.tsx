@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 
 interface TagInputProps {
-  onTagsChange: (tags: string[]) => void
+  onTagsChange: (tags: string) => void
 }
 
 export function TagInput({ onTagsChange }: TagInputProps) {
@@ -30,14 +30,14 @@ export function TagInput({ onTagsChange }: TagInputProps) {
       const newTags = [...tags, trimmedInput]
       setTags(newTags)
       setInputValue('')
-      onTagsChange(newTags)
+      onTagsChange(newTags.join(','))
     }
   }
 
   const removeTag = (tagToRemove: string) => {
     const newTags = tags.filter(tag => tag !== tagToRemove)
     setTags(newTags)
-    onTagsChange(newTags)
+    onTagsChange(newTags.join(','))
   }
 
   return (
