@@ -24,7 +24,8 @@ class ContentDBInit:
                     location TEXT,
                     coordinates_lat REAL,
                     coordinates_lan REAL,
-                    tags TEXT
+                    tags TEXT,
+                    website TEXT
                 )
                 """
             )
