@@ -19,6 +19,7 @@ import { Checkbox } from "./ui/checkbox";
 import { Calendar as CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
+import { OpeenStreetMap, OpenStreetMapAutocomplete } from '@amraneze/osm-autocomplete';
 
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -107,32 +108,30 @@ export function CreateNewForm() {
 
                 <FormField
                     control={form.control}
-                    name="lat"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Latitude</FormLabel>
-                            <FormControl>
-                                <Input placeholder="" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
                     name="lon"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Longitude</FormLabel>
+                    render={(fieldLon) => {
+
+                        return <FormField
+                        control={form.control}
+                        name="lat"
+                        render={(fieldLat) => {
+
+                            return <FormItem>
+                            <FormLabel>Adresse</FormLabel>
                             <FormControl>
-                                <Input placeholder="" {...field} />
+                            <OpenStreetMapAutocomplete value={null} onChange={(data) => {
+                                console.log(data);
+                                fieldLon.field.onChange({target: {value: data?.lon??0}});
+                                fieldLat.field.onChange({target: {value: data?.lat??0}});
+                            }}/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
+    
+                        }}
+                    />
 
-                    )}
+                    }}
                 />
 
                 <FormField
@@ -267,7 +266,7 @@ export function CreateNewForm() {
 
                 <FormField
                     control={form.control}
-                    name="website"
+                    name="tags"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Tags</FormLabel>
