@@ -1,10 +1,18 @@
 from fastapi import FastAPI
 from uuid import uuid4
+from fastapi.middleware.cors import CORSMiddleware
 
 from sqlite_handler import SQLiteHandler
 
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 
 @app.get("/events")
