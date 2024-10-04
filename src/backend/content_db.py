@@ -22,11 +22,13 @@ class ContentDBInit:
                     time TEXT,
                     hrtime TEXT,
                     location TEXT,
-                    
+                    coordinates_lat REAL,
+                    coordinates_lan REAL,
+                    tags TEXT
                 )
                 """
             )
-            await db.commit()  # Korrekt: await db.commit()
+            await db.commit()
             print("Datenbank erstellt")
 
 async def main():
