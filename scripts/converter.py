@@ -1,7 +1,10 @@
 import csv
 import requests
+import os.path
 
-filename = "../datatemp.csv"
+filename = "datatemp.csv"
+if not os.path.isfile(filename):
+    filename = "../" + filename # If the file doesn't exist in the current working directory, check the parent directory instead.
 
 rows = []
 
