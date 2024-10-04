@@ -1,0 +1,10 @@
+Jugend Hackt Berlin 2024
+Jugendfinder
+Requirements:
+-Events eintragen
+-Berlin Fokus
+-OpenStreetMaps implementieren
+	>Auto update
+-Tags Filter
+-Alte Events löschen
+
