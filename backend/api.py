@@ -32,7 +32,7 @@ def create_event(event):
             INSERT INTO events 
             (lat, lon, name, author, location, hrtime, deleteAfter, time, 
             website, tags, description, id) 
-            VALUES (?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (event["lat"], event["lon"], event["name"], event["author"], event["location"],
              event["hrtime"], event["deleteAfter"], event["time"], event["website"],

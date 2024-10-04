@@ -1,12 +1,14 @@
 import csv
 import requests
-
-filename = "../datatemp.csv"
+import os.path
 
 rows = []
 
+filename = "datatemp.csv"
+if not os.path.isfile(filename):
+    filename = "../" + filename # If the file doesn't exist in the current working directory, check the parent directory instead.
+    
 with open(filename, 'r') as csvfile:
-    # creating a csv reader object
     csvreader = csv.reader(csvfile)
     next(csvreader)
 
@@ -16,6 +18,9 @@ with open(filename, 'r') as csvfile:
 for row in rows:
     titles = ("name", "author", "description", "delete_after", "hrtime", "location", "tags", "website")
     data = { titles[i]: row[i] for i in range(len(row)) }
-    response = requests.post("http://10.42.14.240:8000", data)
+    data["lat"] = 0
+    data["lon"] = 0
+    data["time"] = 0
+    response = requests.post("http://10.42.14.240:8000/events", data)
 
 
