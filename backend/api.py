@@ -1,6 +1,7 @@
 from fastapi import FastAPI
-from uuid import uuid4
 from fastapi.middleware.cors import CORSMiddleware
+from uuid import uuid4
+from json import loads as json_loads
 
 from sqlite_handler import SQLiteHandler
 
@@ -24,7 +25,7 @@ def read_root():
 
 @app.post("/events")
 def create_event(event):
-    event["id"] = uuid4().hex
+    event = json_loads(event)
     with SQLiteHandler() as cur:
         cur.execute(
             """
@@ -35,4 +36,4 @@ def create_event(event):
             """,
             (event["lat"], event["lon"], event["name"], event["author"], event["location"],
              event["hrtime"], event["deleteAfter"], event["time"], event["website"],
-             event["tags"], event["description"], uuid4()))
+             event["tags"], event["description"], uuid4().hex))
