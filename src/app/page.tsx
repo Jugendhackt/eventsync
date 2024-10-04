@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog"
 import { CreateNewForm } from '@/components/CreateNewForm';
 import { api } from '@/api/api';
-
+import { MapEvent } from '@/models/event';
 
 
 export default function Home() {
@@ -30,12 +30,13 @@ export default function Home() {
     }
   ), [])
 
-  const [data, setData] = useState<Event[]>([]);
+  const [data, setData] = useState<MapEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     api.read().then((data) => {
+
       setData(data);
       setLoading(false);
       setError(null);
@@ -44,6 +45,9 @@ export default function Home() {
       setLoading(false);
       setError(error);
     });
+
+
+   // setData(JSON.parse(window.localStorage.getItem('data') ?? '[]') satisfies MapEvent[]);
   }, []);
 
   return (
@@ -56,7 +60,6 @@ export default function Home() {
             <></>
           )
         }
-
 
         <div>
           <Dialog>
@@ -91,12 +94,21 @@ export default function Home() {
           <Separator />
         </div>
         <div className=" w-full">
+
           <Map position={[52.52476, 13.4041008]} zoom={13}>
-            <Marker position={[52.52476, 13.4041008]}>
-              <Popup>
-                A pretty CSS3 popup. <br /> Easily customizable.
-              </Popup>
-            </Marker>
+            {
+              data.map((event) => (
+                <Marker position={[52.52476, 13.4041008]}>
+                  <Popup>
+                    <div key={event.id} className="w-full h-20 bg-slate-50 flex flex-row pl-10 pr-10 justify-between items-center">
+                      <p className="text-xl font-bold">{event.name}</p>
+                      <p>{event.location}</p>
+                    </div>
+                  </Popup>
+                </Marker>
+
+              ))
+            }
           </Map>
         </div>
 

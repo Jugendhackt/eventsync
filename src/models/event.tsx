@@ -1,4 +1,4 @@
-export interface Event {
+export interface MapEvent {
     lat: number
     lon: number
     name: string
@@ -9,7 +9,7 @@ export interface Event {
     time: Date | null
     website: string
     tages: string[]
-    desc: string
+    description: string
     createTime: Date | null
     id: string
   }
