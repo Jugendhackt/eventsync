@@ -1,7 +1,7 @@
 import csv
 import requests
 
-filename = "datatemp.csv"
+filename = "../datatemp.csv"
 
 rows = []
 
