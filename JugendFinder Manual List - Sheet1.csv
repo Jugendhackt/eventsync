@@ -1,0 +1,17 @@
+Event,Description,Veranstalter,Location,Koordinaten,Zeit (string),end timestamp (to delete/hide event),tags,website,,Kultur
+Jugendhackt Lab Dresden,,jugendhackt,"Junghansstraße 1-3
+01277 Dresden","51.042042, 13.797660",N/A,,"Programmieren, Workshop",https://jugendhackt.org/lab/dresden/,,Programmieren
+Jugendhackt Lab Erfurt,,jugendhackt,"Schlachthofstraße 20
+99085 Erfurt","50.986561, 11.040200",N/A,,"Programmieren, Workshop",https://jugendhackt.org/lab/erfurt/,,"Meetup, Hangout"
+Jugendhackt Lab Mannheim,,jugendhackt,"Neckarpromenade 46
+68167 Mannheim","49.494560, 8.478610",N/A,,"Programmieren, Workshop",https://jugendhackt.org/lab/mannheim/,,Identität
+Jugendhackt Lab Münster,,jugendhackt,"Leonardo-Campus 6
+48149 Münster","51.975620, 7.601040",N/A,,"Programmieren, Workshop",https://jugendhackt.org/lab/muenster/,,Workshop
+Jugendhackt Lab Freiberg,,jugendhackt,"Beethovenstraße 5,
+09599 Freiberg","50.915890, 13.336840",N/A,,"Programmieren, Workshop",https://jugendhackt.org/lab/freiberg/,,Politik (danger zone) (demo?)
+,,,,,,,,,,Sport
+https://jugendhackt.org/lab/berlin/,,,,,,,,,,
+^ hier sind viele events,,,,,,,,,,
+Data Science für Fortgeschrittene (Fortsetzung),"geeignet für Fortgeschrittene im Alter von 12 bis 18 Jahren und Teilnehmende des Einstiegs-Workshops vom 24. August \n Erfahre, was es mit maschinellem Lernen auf sich hat und wie man Daten analysiert und Vorhersagen trifft. Du solltest Vorkenntnisse mitbringen, zum Beispiel aus unserem Workshop im August.",jugendhackt,"xHain hack+makespace
+Grünberger Str. 16
+10243 Berlin",,Sa. 19.10.2024 | 14:00 – 17:00,,"Programmieren, Workshop",https://jugendhackt.org/lab/berlin/,,
