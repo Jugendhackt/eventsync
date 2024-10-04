@@ -46,3 +46,7 @@ next-env.d.ts
 
 # just in case
 /.venv
+
+
+# bun lock file
+/bun.lockb
