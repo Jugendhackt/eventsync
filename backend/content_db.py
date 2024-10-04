@@ -1,7 +1,7 @@
 import aiosqlite
 import asyncio
 
-db_path = 'src/backend/db/contentdb.db'
+db_path = 'backend/db/contentdb.db'
 
 class ContentDBInit:
     def __init__(self):
