@@ -1,11 +1,13 @@
 import aiosqlite
 import asyncio
 
+
 db_path = 'backend/db/contentdb.db'
 
+
 class ContentDBInit:
-    def __init__(self):
-        self.db_path = db_path
+    def __init__(self, path):
+        self.db_path = path
 
     async def init_db(self):
         async with aiosqlite.connect(self.db_path) as db:
@@ -31,10 +33,11 @@ class ContentDBInit:
             await db.commit()
             print("Datenbank erstellt")
 
+
 async def main():
-    db_init = ContentDBInit()
+    db_init = ContentDBInit(db_path)
     await db_init.init_db()
+
 
 if __name__ == '__main__':
     asyncio.run(main())
-
