@@ -1,7 +1,7 @@
 from sqlite3 import connect
 
 
-db_path = 'backend/db/contentdb.db'
+db_path = 'db/contentdb.db'
 
 
 class SQLiteHandler:

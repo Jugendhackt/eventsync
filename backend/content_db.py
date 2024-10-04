@@ -3,25 +3,23 @@ from sqlite_handler import SQLiteHandler
 
 def main():
     with SQLiteHandler() as cur:
-        cur.execute(
-                """
+        cur.execute("""
                 CREATE TABLE IF NOT EXISTS events (
-                    event_id TEXT,
+                    lat REAL,
+                    lon REAL,
                     name TEXT,
                     author TEXT,
-                    description TEXT,
-                    create_time TEXT DEFAULT CURRENT_TIMESTAMP,
-                    delete_after INT,
-                    time TEXT,
-                    hrtime TEXT,
                     location TEXT,
-                    coordinates_lat REAL,
-                    coordinates_lan REAL,
+                    hrtime TEXT,
+                    deleteAfter INT,
+                    time TEXT,
+                    website TEXT,
                     tags TEXT,
-                    website TEXT
+                    description TEXT,
+                    createTime TEXT DEFAULT CURRENT_TIMESTAMP,
+                    id TEXT
                 )
-                """
-            )
+                """)
 
 
 if __name__ == "__main__":
