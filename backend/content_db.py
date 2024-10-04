@@ -5,7 +5,7 @@ def main():
     with SQLiteHandler() as cur:
         cur.execute(
                 """
-                CREATE TABLE IF NOT EXISTS content_db (
+                CREATE TABLE IF NOT EXISTS events (
                     event_id TEXT,
                     name TEXT,
                     author TEXT,
