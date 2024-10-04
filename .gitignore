@@ -40,3 +40,6 @@ next-env.d.ts
 
 ### DO NOT PUSH THE DAMN DATABASE
 /backend/db
+
+# just in case
+/.venv
