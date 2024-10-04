@@ -1,17 +1,9 @@
-import aiosqlite
-import asyncio
+from sqlite_handler import SQLiteHandler
 
 
-db_path = 'backend/db/contentdb.db'
-
-
-class ContentDBInit:
-    def __init__(self, path):
-        self.db_path = path
-
-    async def init_db(self):
-        async with aiosqlite.connect(self.db_path) as db:
-            await db.execute(
+def main():
+    with SQLiteHandler() as cur:
+        cur.execute(
                 """
                 CREATE TABLE IF NOT EXISTS content_db (
                     event_id TEXT,
@@ -30,14 +22,7 @@ class ContentDBInit:
                 )
                 """
             )
-            await db.commit()
-            print("Datenbank erstellt")
 
 
-async def main():
-    db_init = ContentDBInit(db_path)
-    await db_init.init_db()
-
-
-if __name__ == '__main__':
-    asyncio.run(main())
+if __name__ == "__main__":
+    main()
