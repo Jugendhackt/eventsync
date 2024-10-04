@@ -1,7 +1,7 @@
 "use client";
 import { Marker, Popup } from 'react-leaflet';
 import dynamic from 'next/dynamic';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -16,6 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { CreateNewForm } from '@/components/CreateNewForm';
+import { api } from '@/api/api';
 
 
 
@@ -29,38 +30,57 @@ export default function Home() {
     }
   ), [])
 
-  
+  const [data, setData] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
+  useEffect(() => {
+    api.read().then((data) => {
+      setData(data);
+      setLoading(false);
+      setError(null);
+    }).catch((error) => {
+      console.error(error);
+      setLoading(false);
+      setError(error);
+    });
+  }, []);
 
   return (
     <div className="w-full h-screen flex flex-col">
       <div className="w-full h-20 bg-slate-50 flex flex-row pl-10 pr-10 justify-between items-center">
         <p className="text-xl font-bold">Jugendfinder</p>
 
+        {
+          loading ? <p>Loading...</p> : error ? <p>Ein Fehler ist aufgetreten</p> : (
+            <></>
+          )
+        }
 
-      <div>
-      <Dialog>
-  <DialogTrigger>Neuer Eintrag</DialogTrigger>
-  <DialogContent className='h-2/3 overflow-scroll	'>
-    <DialogHeader>
-      <DialogTitle>Neuen Eintrag hinzufügen</DialogTitle>
-      <DialogDescription>
-        <CreateNewForm />
-      </DialogDescription>
-    </DialogHeader>
-    <DialogFooter>
-        <Button type="submit" className='mt-2'>Speichern</Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>
 
-      
-      </div>
+        <div>
+          <Dialog>
+            <DialogTrigger><Button variant="outline">Neuer Eintrag</Button></DialogTrigger>
+            <DialogContent className='h-2/3 overflow-scroll'>
+              <DialogHeader>
+                <DialogTitle>Neuen Eintrag hinzufügen</DialogTitle>
+                <DialogDescription>
+                  <CreateNewForm />
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button type="submit" className='mt-2'>Speichern</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+
+        </div>
 
       </div>
       <div className="flex flex-row w-screen h-full justify-stretch">
         <div className='w-1/3 max-w-100 md:flex hidden flex-col'>
-          <div className="w-full h-20  flex flex-row pl-10 pr-10 justify-between items-center">
+          <div className="w-full h-20 flex flex-row pl-4 pr-4 justify-between items-center">
             <div className="flex flex-row gap-3 items-center"> <SlidersHorizontal />
               <p className="text-xl font-bold">Filter</p>
             </div>
