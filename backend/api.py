@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from backend.event import Event
+from event import Event
 
 
 app = FastAPI()
