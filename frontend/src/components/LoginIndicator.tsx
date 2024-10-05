@@ -14,11 +14,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 export const LoginIndicator = () => {
-    const { username, setUsername } = useAccount();
+    const { username, setUsername, isAdmin } = useAccount();
 
     function logout () {
         setUsername(null);
         window.localStorage.removeItem('token');
+        window.localStorage.removeItem('username');
+        window.localStorage.removeItem('isAdmin');
     }
 
     if (username) {
@@ -27,7 +29,7 @@ export const LoginIndicator = () => {
             <DropdownMenuContent>
                 <DropdownMenuLabel>{username}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem><Link href="/admin">Admin-Dashboard</Link></DropdownMenuItem>
+                {isAdmin && <DropdownMenuItem><Link href="/admin">Admin-Dashboard</Link></DropdownMenuItem> }
                 <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
 
             </DropdownMenuContent>

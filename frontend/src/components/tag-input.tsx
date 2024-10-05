@@ -58,7 +58,7 @@ export function TagInput({ onTagsChange }: TagInputProps) {
 
 export const TagsViewer = ({ tags, removeTag }: { tags: string[], removeTag: ((tag: string) => void) | null }) => {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2 mt-2">
         {tags.map((tag, index) => (
           <Badge key={index} variant="secondary" className="text-sm py-1 px-2">
             {tag}

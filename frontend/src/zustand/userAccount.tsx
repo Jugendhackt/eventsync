@@ -1,4 +1,3 @@
-import { MapEvent } from '@/server/schema'
 import { create } from 'zustand'
 
 interface UserAccountState {
@@ -10,10 +9,15 @@ interface UserAccountState {
 
 export const useAccount = create<UserAccountState>((set) => ({
     username: window.localStorage.getItem('username') || null,
-    isAdmin: false,
-    
+    isAdmin: window.localStorage.getItem('isAdmin') === 'true',
+    setIsAdmin: (isAdmin: boolean) => {
+        set((state) => ({ isAdmin: isAdmin, username: state.username }));
+        if(isAdmin){
+            window.localStorage.setItem('isAdmin', isAdmin.toString());
+        }
+    },
     setUsername: (username: string | null) => {
-        set((state) => ({ username: username }));
+        set((state) => ({ username: username, isAdmin: state.isAdmin }));
         if(username){
             window.localStorage.setItem('username', username);
         }

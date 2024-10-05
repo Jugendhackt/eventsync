@@ -13,7 +13,7 @@ export const Login = () => {
     const [localUsername, setLocalUsername] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
-    const {username,setUsername} = useAccount();
+    const {username, setUsername, setIsAdmin} = useAccount();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -22,12 +22,15 @@ export const Login = () => {
         if (!localUsername || !password) {
             setError("Please fill in all fields")
         } else {
-            api.login(localUsername, password).then((data) => {
+            api.login(localUsername.toLocaleLowerCase(), password).then((data) => {
                 console.log(data);
                 if(data.success){
                     window.localStorage.setItem("token", data.token);
                     console.log("Login successful");
-                    setUsername("Admin")
+                    const usernameCapitalized = data.display_name.charAt(0).toUpperCase() + data.display_name.slice(1);
+                    setUsername(usernameCapitalized);
+                    setIsAdmin(data.is_admin);
+                    
                     
                 }else{
                     setError("Falsche Anmeldedaten");

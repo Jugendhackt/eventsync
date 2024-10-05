@@ -8,11 +8,12 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { MapPin, ScanBarcode } from "lucide-react"
+import { ExternalLink, MapPin, ScanBarcode } from "lucide-react"
 import { TagsViewer } from "./tag-input"
 import { useEventSelection } from "@/zustand/eventSelection"
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 export const EventList = (props: { data: MapEvent[] }) => {
     return (
@@ -53,12 +54,9 @@ const EventEntry = (props: { event: MapEvent }) => {
                     <CardTitle className="flex flex-row justify-between items-start">
                         <div className="flex flex-row gap-2 items-center">
                         {props.event.name}
-                        {
-                            props.event.tags &&
-                            <TagsViewer tags={props.event.tags.split(',')} removeTag={null} />
-                        }
+                        
                         </div>
-                       { /*<Button onClick={(e)=>{e.stopPropagation()}}><ScanBarcode /></Button>*/}
+                       {<div onClick={(e)=>{e.stopPropagation();window.open("//"+props.event.website, '_blank');}}>< ExternalLink/></div>}
 
                     </CardTitle>
                     <CardDescription>{props.event.author}</CardDescription>
@@ -74,7 +72,13 @@ const EventEntry = (props: { event: MapEvent }) => {
                         </div>
 
                     </div>
+
+                    {
+                            props.event.tags &&
+                            <TagsViewer tags={props.event.tags.split(',')} removeTag={null} />
+                        }
                 </CardContent>
+                
 
             </Card>
         </div>
