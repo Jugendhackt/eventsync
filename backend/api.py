@@ -97,30 +97,27 @@ def get_users_admin(request: Request, _):
 
 
 @app.delete("/admin/user")
+@check_token_admin_deco
 def delete_user(request: Request, body: dict):
     user_id = body["user_id"]
-    if not check_token_admin(request):
-        raise HTTPException(status_code=401)
-
     with SQLiteHandler() as cur:
         cur.execute("DELETE FROM users WHERE user_id = ?", (user_id, ))
     return {"success": True, "message": f"User deleted: {user_id}"}
 
 
 @app.post("/admin")
-def verify_event(request: Request, event_id: str):
-    if not check_token_admin(request):
-        raise HTTPException(status_code=401)
+@check_token_admin_deco
+def verify_event(request: Request, body: dict):
+    event_id = body["event_id"]
     with SQLiteHandler() as cur:
         cur.execute("UPDATE events SET verified=1 WHERE event_id=?", (event_id,))
         return {"success": True}
 
 
 @app.post("/admin/op")
+@check_token_admin_deco
 def verify_event(request: Request, body: dict):
     user_id, is_admin = body["user_id"], 1 if body["is_admin"] else 0
-    if not check_token_admin(request):
-        raise HTTPException(status_code=401)
     with SQLiteHandler() as cur:
         cur.execute("UPDATE users SET is_admin=? WHERE user_id=?", (is_admin, user_id))
         return {"success": True}
