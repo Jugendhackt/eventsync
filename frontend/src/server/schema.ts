@@ -1,19 +1,22 @@
-"use server";
 import { sql } from "drizzle-orm";
 import { text, integer, sqliteTable } from "drizzle-orm/sqlite-core";
+import { InferSelectModel } from "drizzle-orm/table";
+
 export const events = sqliteTable('events', {
-    id: text('id'),
-    lat: integer('lat'),
-    lon: integer('lon'),
-    name: text('name'),
-    author: text('author'),
-    location: text('location'),
+    id: text('id').primaryKey().unique(),
+    lat: integer('lat').notNull(),
+    lon: integer('lon').notNull(),
+    name: text('name').notNull(),
+    author: text('author').notNull(),
+    location: text('location').notNull(),
     hrtime: text('hrtime'),
-    deleteAfter: integer('deleteAfter'),
+    deleteAfter: integer('deleteAfter', { mode: 'boolean' }),
     time: text('time'),
-    website: text('website'),
-    tags: text('tags'),
-    desc: text('desc'),
-    createTime: text('createTime'),
+    website: text('website').notNull(),
+    tags: text('tags').notNull(),
+    description: text('description').notNull(),
+    createTime: text('createTime').default(sql`CURRENT_TIMESTAMP`)
 
   });
+
+  export type MapEvent = InferSelectModel<typeof events>;

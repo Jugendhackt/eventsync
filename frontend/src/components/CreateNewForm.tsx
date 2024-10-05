@@ -28,6 +28,10 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { TagInput } from "./tag-input";
+import { MapEvent } from "@/server/schema";
+import { addEventToDrizzle } from "@/server/dbAccess";
+import { v4 as uuidv4 } from 'uuid';
+import { LOAD_DATA_FROM_API } from "@/dataSource";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -36,15 +40,14 @@ const formSchema = z.object({
     lon: z.number().min(-180).max(180),
     author: z.string().min(2).max(50),
     location: z.string().min(2).max(50),
-    hrtime: z.string().min(2).max(50),
-    date: z.date(),
+    hrtime: z.string().max(50).optional(),
+    time: z.date().optional(),
     deleteAfter: z.boolean(),
-    tags: z.array(z.string()).max(5),
+    tags: z.string().min(2).max(50),
     website: z.string().min(2).max(50),
-    desc: z.string().min(2).max(200),
 })
 
-export function CreateNewForm() {
+export function CreateNewForm(props: {reloadCallback: () => void}) {
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -56,11 +59,10 @@ export function CreateNewForm() {
             author: "",
             location: "",
             hrtime: "",
-            date: new Date(),
+            time: new Date(),
             deleteAfter: false,
             website: "",
-            tags: [],
-            desc: "",
+            tags: "",
 
         },
     })
@@ -69,6 +71,21 @@ export function CreateNewForm() {
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
+
+        if(LOAD_DATA_FROM_API) {
+            //TODO: Implement API call
+        }else{
+            addEventToDrizzle({
+                ...values,
+                createTime: new Date().toISOString(),
+                id: uuidv4(),
+                hrtime: values.hrtime || null,
+                time: values.time?.toISOString() || null
+            });
+        }
+       
+
+        props.reloadCallback();
         console.log(values)
     }
 
@@ -121,8 +138,8 @@ export function CreateNewForm() {
                             <FormControl>
                             <OpenStreetMapAutocomplete value={null} onChange={(data) => {
                                 console.log(data);
-                                fieldLon.field.onChange({target: {value: data?.lon??0}});
-                                fieldLat.field.onChange({target: {value: data?.lat??0}});
+                                fieldLon.field.onChange({target: {value: parseFloat(data?.lon??"0")}});
+                                fieldLat.field.onChange({target: {value: parseFloat(data?.lat??"0")}});
                             }}/>
                             </FormControl>
                             <FormMessage />
@@ -212,7 +229,7 @@ export function CreateNewForm() {
                     oneTimeEvent &&
                     <FormField
                         control={form.control}
-                        name="date"
+                        name="time"
                         render={({ field }) => (
                             <FormItem className="flex flex-row items-center gap-2">
                                 <FormLabel>Datum</FormLabel>
@@ -234,7 +251,7 @@ export function CreateNewForm() {
                                         <PopoverContent className="w-auto p-0">
                                             <Calendar
                                                 mode="single"
-                                                selected={field.value}
+                                                selected={field.value??new Date()}
                                                 onSelect={field.onChange}
                                                 initialFocus
                                             />
@@ -266,21 +283,6 @@ export function CreateNewForm() {
 
                 <FormField
                     control={form.control}
-                    name="tags"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Tags</FormLabel>
-                            <FormControl>
-                                <Input placeholder="mywebsite.com" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
                     name="website"
                     render={({ field }) => (
                         <FormItem>
@@ -293,6 +295,8 @@ export function CreateNewForm() {
 
                     )}
                 />
+
+                <Button type="submit" className='mt-2 self-end'>Speichern</Button>
 
             </form>
         </Form>

@@ -17,8 +17,9 @@ import {
 } from "@/components/ui/dialog"
 import { CreateNewForm } from '@/components/CreateNewForm';
 import { api } from '@/api/api';
-import { MapEvent } from '@/models/event';
-
+import { loadDataFromDrizzle } from '@/server/dbAccess';
+import { MapEvent } from '@/server/schema';
+import { LOAD_DATA_FROM_API } from '@/dataSource';
 
 export default function Home() {
 
@@ -33,22 +34,35 @@ export default function Home() {
   const [data, setData] = useState<MapEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [openNewDialog, setOpenNewDialog] = useState(false);
 
   useEffect(() => {
-    api.read().then((data) => {
-
-      setData(data);
-      setLoading(false);
-      setError(null);
-    }).catch((error) => {
-      console.error(error);
-      setLoading(false);
-      setError(error);
-    });
-
-
-   // setData(JSON.parse(window.localStorage.getItem('data') ?? '[]') satisfies MapEvent[]);
+    loadData();
   }, []);
+
+  function loadData() {
+    if(LOAD_DATA_FROM_API) {
+      api.read().then((data) => {
+
+         setData(data);
+         setLoading(false);
+         setError(null);
+       }).catch((error) => {
+         console.error(error);
+         setLoading(false);
+         setError(error);
+       });
+    }else{
+      loadDataFromDrizzle().then((data) => {
+        setData(data);
+        setLoading(false);
+        console.log(data);
+      });
+    }
+    setOpenNewDialog(false);
+  }
+
+
 
   return (
     <div className="w-full h-screen flex flex-col">
@@ -62,18 +76,16 @@ export default function Home() {
         }
 
         <div>
-          <Dialog>
-            <DialogTrigger><Button variant="outline">Neuer Eintrag</Button></DialogTrigger>
+          <Dialog open={openNewDialog}>
+            <DialogTrigger><Button onClick={()=>setOpenNewDialog(true)} variant="outline">Neuer Eintrag</Button></DialogTrigger>
             <DialogContent className='h-2/3 overflow-scroll'>
               <DialogHeader>
                 <DialogTitle>Neuen Eintrag hinzufügen</DialogTitle>
                 <DialogDescription>
-                  <CreateNewForm />
+                  <CreateNewForm reloadCallback={loadData} />
                 </DialogDescription>
               </DialogHeader>
-              <DialogFooter>
-                <Button type="submit" className='mt-2'>Speichern</Button>
-              </DialogFooter>
+              
             </DialogContent>
           </Dialog>
 
@@ -98,11 +110,12 @@ export default function Home() {
           <Map position={[52.52476, 13.4041008]} zoom={13}>
             {
               data.map((event) => (
-                <Marker position={[52.52476, 13.4041008]}>
+                <Marker key={event.id} position={[event.lat, event.lon]}>
                   <Popup>
-                    <div key={event.id} className="w-full h-20 bg-slate-50 flex flex-row pl-10 pr-10 justify-between items-center">
+                    <div  className="w-full flex flex-col pl-10 pr-10 ">
                       <p className="text-xl font-bold">{event.name}</p>
                       <p>{event.location}</p>
+                      <p>{event.hrtime}</p>
                     </div>
                   </Popup>
                 </Marker>
