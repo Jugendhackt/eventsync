@@ -23,6 +23,13 @@ def main():
                     tag         TEXT NOT NULL,
                     event_id    TEXT,
                     FOREIGN KEY (event_id)  REFERENCES events(id)
+                );
+                CREATE TABLE IF NOT EXISTS user (
+                    user_id             TEXT NOT NULL PRIMARY KEY,
+                    username            TEXT NOT NULL,
+                    display_name        TEXT NOT NULL,
+                    is_admin            INT  NOT NULL DEFAULT 0,
+                    hashed_password     TEXT NOT NULL
                 )
                 """)
 
