@@ -21,7 +21,7 @@ def JWT_encode(data, secret):
 token = JWT_encode(data, secret)
 print (token)
 
-def JWT_decode(token, secret):
+def JWT_decode(token):
     try:
         decoded = jwt.decode(token, key='super_secure', algorithms=['HS256', ])
 
@@ -29,5 +29,5 @@ def JWT_decode(token, secret):
         print(f'Unable to decode the token, error: {error}')
     return(decoded)
         
-decoded = JWT_decode(token, secret)
+decoded = JWT_decode(token)
 print (decoded)
