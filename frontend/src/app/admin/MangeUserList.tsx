@@ -24,6 +24,18 @@ import { LOAD_DATA_FROM_API } from "@/dataSource";
 import { deleteEvent, verifyEvent } from "@/server/dbAccess";
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label";
+import { Trash2 } from "lucide-react";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export const ManageUserList = (props: { loadData: () => Promise<User[]> }) => {
     const [users, setUsers] = useState<User[]>([]);
@@ -66,7 +78,10 @@ export const ManageUserList = (props: { loadData: () => Promise<User[]> }) => {
                 }
 
                 {
-                    !loading && !error && users.map((user) => <UserEntry user={user} />)
+                    !loading && !error && users.map((user) => <UserEntry user={user} deleted={() => {
+                        const newUsers = users.filter((u) => u.user_id !== user.user_id);
+                        setUsers(newUsers);
+                    }} />)
                 }
 
                 {
@@ -78,7 +93,7 @@ export const ManageUserList = (props: { loadData: () => Promise<User[]> }) => {
 
 };
 
-const UserEntry = (props: { user: User }) => {
+const UserEntry = (props: { user: User, deleted: () => void }) => {
 
     const [clicked, setClicked] = useState(props.user.is_admin ?? false);
 
@@ -89,8 +104,17 @@ const UserEntry = (props: { user: User }) => {
             // deleteEvent(props.event);
         } else {
             api.changeAdmin(props.user.user_id, setAdmin);
-          
         }
+    }
+
+    function delete_user() {
+        if (!LOAD_DATA_FROM_API) {
+            // deleteEvent(props.event);
+        } else {
+            api.deleteUser(props.user.user_id);
+        }
+        props.deleted();
+
     }
 
     return (
@@ -110,7 +134,25 @@ const UserEntry = (props: { user: User }) => {
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center space-x-2">
                         <Label htmlFor="is_admin-mode">Admin</Label>
-                        <Switch id="is_admin" checked={clicked} onCheckedChange={()=>change_admin(!clicked)} />
+                        <Switch id="is_admin" checked={clicked} onCheckedChange={() => change_admin(!clicked)} />
+                        <div />
+
+                        <AlertDialog>
+                            <AlertDialogTrigger><Trash2 /></AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Bist du sicher?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Diese Aktion kann nicht widerrufen werden. Dies wird den ausgewählten Account "{props.user.display_name}" permanent löschen.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+                                    <AlertDialogAction onClick={delete_user} className="bg-destructive">Löschen</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+
                     </div>
                 </div>
             </div>

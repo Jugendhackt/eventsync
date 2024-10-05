@@ -83,7 +83,7 @@ export const api = {
     },
 
     register: async (username: string, password: string, display_name: string) => {
-        const response = await fetch("http://" + ip + ":8000/register", {
+        const response = await fetch("http://" + ip + ":8000/user/register", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -125,5 +125,20 @@ export const api = {
         }
         return await response.json();
     },
+
+    deleteUser: async (user_id: string) => {
+        const response = await fetch("http://" + ip + ":8000/admin/user", {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': localStorage.getItem('token') || ''
+            },
+            body: JSON.stringify({ user_id })
+        })
+        if (Math.floor(response.status / 100) !== 2) {
+            throw new Error();
+        }
+        return await response.json();
+    }
 
 }

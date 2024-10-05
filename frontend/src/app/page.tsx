@@ -29,6 +29,7 @@ import { Login } from '@/components/Login';
 import { SearchBar } from '@/components/search-bar';
 import { LoginIndicator } from '@/components/LoginIndicator';
 
+
 export default function Home() {
 
   const Map = useMemo(() => dynamic(
@@ -106,6 +107,7 @@ export default function Home() {
 
       </div>
       <div className="flex flex-row w-screen h-full overflow-hidden justify-stretch">
+        
         <div className='w-1/3 max-w-100 md:flex hidden flex-col'>
           <div className="w-full h-20 flex flex-row pl-4 pr-4 justify-between items-center gap-4">
             <SearchBar data={data} setFilteredData={setFilteredData}/>
