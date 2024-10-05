@@ -60,19 +60,16 @@ def get_events_admin(search_filter):
     
 
 @app.post("/admin")
-def verify_events(id: str):
-    command = "UPDATE verified FROM events WHERE id=?", (id,)
-
+def verify_events(event_id: str):
     with SQLiteHandler() as cur:
-        cur.execute(command)
+        cur.execute("UPDATE events SET verified=1 WHERE id=?", (event_id,))
 
 
 @app.delete("/admin")
-def delete_events(id: str):
-    command = "DELETE * FROM events WHERE id=?", (id,)
-
+def delete_events(event_id: str):
     with SQLiteHandler() as cur:
-        cur.execute(command)
+        cur.execute("DELETE FROM events WHERE id=?", (event_id, ))
+    return "success"
 
 
 if __name__ == "__main__":
