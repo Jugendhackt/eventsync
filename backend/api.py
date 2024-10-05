@@ -44,7 +44,6 @@ def read_root(search_filter):
 @app.post("/events")
 def create_event(event: Event):
     print("event")
-    event = json_loads(event)
     with SQLiteHandler() as cur:
         cur.execute(
             """
