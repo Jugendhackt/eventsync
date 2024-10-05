@@ -5,7 +5,7 @@ import os.path
 rows = []
 
 filename = input("Input file name (leave empty for datatemp.csv): ")
-filename = filename if filename != "" else "datatemp.csv" # overwrite input if empty
+filename = filename if filename else "datatemp.csv" # overwrite input if empty
 if not os.path.isfile(filename):
     filename = "../" + filename # If the file doesn't exist in the current working directory, check the parent directory instead.
 
