@@ -19,7 +19,7 @@ app.add_middleware(
 @app.get("/events")
 def read_root(search_filter):
     search_filter = json_loads(search_filter)
-    command = "SELECT * FROM events"
+    command = "SELECT * FROM events WHERE verified=True"
     for key, item in enumerate(search_filter):
         command += f" WHERE {key} = '{item}'"
 
@@ -36,8 +36,8 @@ def create_event(event):
             """
             INSERT INTO events 
             (lat, lon, name, author, location, hrtime, deleteAfter, time, 
-            website, tags, description, id) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            website, tags, description, id, verified) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (event["lat"], event["lon"], event["name"], event["author"], event["location"],
              event["hrtime"], event["deleteAfter"], event["time"], event["website"],

@@ -17,7 +17,8 @@ def main():
                     tags TEXT,
                     description TEXT,
                     createTime TEXT DEFAULT CURRENT_TIMESTAMP,
-                    id TEXT
+                    id TEXT,
+                    verified INT
                 )
                 """)
 
