@@ -79,7 +79,8 @@ export function CreateNewForm(props: {reloadCallback: () => void}) {
                 createTime: new Date().toISOString(),
                 id: uuidv4(),
                 hrtime: values.hrtime || null,
-                time: values.time?.toISOString() || null
+                time: values.time?.toISOString() || null,
+                verified: false
             }).then(() => {
                 console.log("API call success");
             });
@@ -89,7 +90,8 @@ export function CreateNewForm(props: {reloadCallback: () => void}) {
                 createTime: new Date().toISOString(),
                 id: uuidv4(),
                 hrtime: values.hrtime || null,
-                time: values.time?.toISOString() || null
+                time: values.time?.toISOString() || null,
+                verified: false
             });
         }
        

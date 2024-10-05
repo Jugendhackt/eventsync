@@ -15,7 +15,8 @@ export const events = sqliteTable('events', {
     website: text('website').notNull(),
     tags: text('tags').notNull(),
     description: text('description').notNull(),
-    createTime: text('createTime').default(sql`CURRENT_TIMESTAMP`)
+    createTime: text('createTime').default(sql`CURRENT_TIMESTAMP`),
+    verified: integer('verified', { mode: 'boolean' }),
 
   });
 

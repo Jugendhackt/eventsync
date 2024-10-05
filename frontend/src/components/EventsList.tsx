@@ -19,6 +19,10 @@ export const EventList = (props: { data: MapEvent[] }) => {
             <p className="pl-4 text-l font-bold">Event Liste</p>
             <div className="pr-4 pl-4 flex flex-col gap-4 mt-2 h-full overflow-scroll pb-20">
                 {props.data.map((event) => <EventEntry key={event.id} event={event} />)}
+                {
+                    props.data.length == 0 &&
+                    <p>Keine Events vorhanden</p>
+                }
             </div>
         </div>
     )
@@ -43,9 +47,14 @@ const EventEntry = (props: { event: MapEvent }) => {
 
         <div ref={myRef}>
 
-            <Card onClick={() => {setEvent(props.event); setClicked(true);}} className={event?.id == props.event.id ? "bg-slate-200" : "" + " cursor-pointer"}>
+            <Card onClick={() => { setEvent(props.event); setClicked(true); }} className={event?.id == props.event.id ? "bg-slate-200" : "" + " cursor-pointer"}>
                 <CardHeader>
-                    <CardTitle>{props.event.name}</CardTitle>
+                    <CardTitle className="flex flex-row gap-2 items-center">{props.event.name}
+                        {
+                            props.event.tags &&
+                            <TagsViewer tags={props.event.tags.split(',')} removeTag={null} />
+                        }
+                    </CardTitle>
                     <CardDescription>{props.event.author}</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -57,11 +66,7 @@ const EventEntry = (props: { event: MapEvent }) => {
                             <MapPin />
                             <span>{props.event.location}</span>
                         </div>
-                       {
-                            props.event.tags &&
-                            <TagsViewer tags={props.event.tags.split(',')} removeTag={null} />
 
-                       } 
                     </div>
                 </CardContent>
 

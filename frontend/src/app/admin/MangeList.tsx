@@ -20,6 +20,8 @@ import {
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { TagsViewer } from "@/components/tag-input";
 import { Button } from "@/components/ui/button";
+import { LOAD_DATA_FROM_API } from "@/dataSource";
+import { deleteEvent, verifyEvent } from "@/server/dbAccess";
 
 export const ManageList = (props: {loadData: ()=>Promise<MapEvent[]>, verifyable: boolean, headerText:string, headerDescription: string}) => {
     const [events, setEvents] = useState<MapEvent[]>([]);
@@ -77,12 +79,21 @@ return(
 
 const EventEntry = (props: { event: MapEvent,verifyable: boolean, onProcessed: ()=>void }) => {
     function verify_event() {
-        api.verify_event(props.event.id);
+        if(!LOAD_DATA_FROM_API) {
+            verifyEvent(props.event);
+        }else{
+            api.verify_event(props.event.id);
+
+        }
         props.onProcessed();
     }
 
     function delete_event() {
-        api.delete_event(props.event.id);
+        if(!LOAD_DATA_FROM_API) {
+            deleteEvent(props.event);
+        }else{
+            api.delete_event(props.event.id);
+        }
         props.onProcessed();
     }
 
