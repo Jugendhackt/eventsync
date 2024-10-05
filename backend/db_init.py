@@ -16,7 +16,7 @@ def main():
                     website     TEXT NOT NULL,
                     description TEXT NOT NULL,
                     createTime  TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    event_id          TEXT NOT NULL PRIMARY KEY,
+                    event_id    TEXT NOT NULL PRIMARY KEY,
                     verified    INT  NOT NULL DEFAULT 0
                 );
                 CREATE TABLE IF NOT EXISTS event_tags (
