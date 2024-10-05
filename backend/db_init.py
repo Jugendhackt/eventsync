@@ -24,7 +24,7 @@ def main():
                     event_id    TEXT,
                     FOREIGN KEY (event_id)  REFERENCES events(id)
                 );
-                CREATE TABLE IF NOT EXISTS user (
+                CREATE TABLE IF NOT EXISTS users (
                     user_id             TEXT NOT NULL PRIMARY KEY,
                     username            TEXT NOT NULL,
                     display_name        TEXT NOT NULL,
