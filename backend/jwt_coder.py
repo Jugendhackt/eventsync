@@ -16,8 +16,9 @@ TOKEN = jwt_encode(data, SECRET)
 
 
 def jwt_decode(_token, key):
+    """takes token and returns decoded data"""
     try:
-        _decoded = jwt.decode(_token, key=key, algorithms=['HS256', ])
+        decoded = jwt.decode(_token, key=key, algorithms=['HS256', ])
     except ExpiredSignatureError as error:
         print(f'Unable to decode the token, error: {error}')
         raise

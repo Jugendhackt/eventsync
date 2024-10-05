@@ -6,10 +6,6 @@ from uvicorn import run as uvicorn_run
 
 from sqlite_handler import SQLiteHandler
 from event import Event
-
-from jwt_coder import jwt_encode, jwt_decode
-#JWT_encode takes data and secret and returns the token
-#JWT_decode takes token and returns decoded data
 from jwt_coder import jwt_encode, jwt_decode
 
 
@@ -26,13 +22,10 @@ app.add_middleware(
 def check_cookie(request):
     cookie = request.cookies.get("key")
     print(cookie)
-    if cookie == None:
+    if cookie is None:
         cookie = "Cookie"
     decoded = jwt_decode(cookie, "key")
-    if decoded == {"hallo": "hi"}:
-        return True
-    else:
-        return False
+    return decoded == {"hallo": "hi"}
 
 
 @app.get("/events")
@@ -81,7 +74,7 @@ def create_event(event: Event):
 
 @app.get("/admin")
 def get_events_admin(request: Request, search_filter):
-    if check_cookie(request) is True:
+    if check_cookie(request):
         search_filter = json_loads(search_filter)
         command = "SELECT * FROM events WHERE verified=0"
         for key, item in enumerate(search_filter):
@@ -100,6 +93,7 @@ def get_events_admin(request: Request, search_filter):
             )
             event["tags"] = ",".join(list(map(lambda x: x["tag"], cur.fetchall())))
         return events
+    return "failed"
 
 
 @app.post("/admin")
@@ -118,8 +112,7 @@ def delete_event(request: Request, event_id: str):
         with SQLiteHandler() as cur:
             cur.execute("DELETE FROM events WHERE event_id=?", (event_id, ))
         return {"message": "toll du bist drinnen bro"}
-    else:
-        return {"message": "sry Bro"}
+    return {"message": "sry Bro"}
 
 
 @app.post("/login")
@@ -128,9 +121,7 @@ def login(pw: str, response: Response):
         jwt_token = jwt_encode({"hallo": "hi"}, "key")
         response.set_cookie(key="key", value=jwt_token)
         return {"message": "cookie übergeben :)"}
-    else:
-        return {"error": "Passwort falsch"}
-
+    return {"error": "Passwort falsch"}
 
 
 if __name__ == "__main__":
