@@ -66,6 +66,7 @@ def verify_events(id: str):
     with SQLiteHandler() as cur:
         cur.execute(command)
 
+
 @app.delete("/admin")
 def delete_events(id: str):
     command = "DELETE * FROM events WHERE id=?", (id,)
@@ -75,4 +76,4 @@ def delete_events(id: str):
 
 
 if __name__ == "__main__":
-    uvicorn_run(app, host="0.0.0.0", port=30000)
+    uvicorn_run(app, host="0.0.0.0", port=8000)
