@@ -130,18 +130,18 @@ def login(login_data: dict, response: Response):
 
 @app.post("/register")
 def create_user(username, password, display_name):
+    if display_name == "":
+        raise HTTPException(status_code=400, detail="display name cannot be empty")
     with SQLiteHandler() as cur:
-        user_id = uuid4()
-        command = "INSERT INTO user (user_id, username, hashed_password, is_admin, display_name) VALUE (?, ?, ?, ?, ?)"
-
+        cur.execute("SELECT username FROM users WHERE username=?", (username,))
+        if len(cur.fetchall()) != 0:
+            raise HTTPException(status_code=409, detail="Chosen username is already in use")
         hashed_password = hash_it(password + username + SECRET_KEY)
-
-        check_username = "SELECT username FROM user WHERE username=?"
-
-        cur.execute(command, (user_id, username, hashed_password, 0, display_name))
-        cur.execute(check_username, (username))
-
-
+        cur.execute(
+            "INSERT INTO user (user_id, username, hashed_password, is_admin, display_name) VALUE (?, ?, ?, ?, ?)",
+            (uuid4(), username, hashed_password, 0, display_name)
+        )
+    return {"success": True}
 
 
 if __name__ == "__main__":
