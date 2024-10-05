@@ -21,6 +21,7 @@ export const LoginIndicator = () => {
         window.localStorage.removeItem('token');
         window.localStorage.removeItem('username');
         window.localStorage.removeItem('isAdmin');
+        window.location.reload();
     }
 
     if (username) {

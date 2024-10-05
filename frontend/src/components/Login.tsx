@@ -29,6 +29,7 @@ export const Login = () => {
                     const usernameCapitalized = data.display_name.charAt(0).toUpperCase() + data.display_name.slice(1);
                     setUsername(usernameCapitalized);
                     setIsAdmin(data.is_admin);
+                    window.location.reload(); //TODO fix
                 }
             }).catch((error) => {
                 setError("Fehler bei der Registrierung/Username bereits vergeben");
@@ -42,6 +43,7 @@ export const Login = () => {
                     const usernameCapitalized = data.display_name.charAt(0).toUpperCase() + data.display_name.slice(1);
                     setUsername(usernameCapitalized);
                     setIsAdmin(data.is_admin);
+                    window.location.reload(); //TODO fix
                 } else {
                     setError("Falsche Anmeldedaten");
                 }

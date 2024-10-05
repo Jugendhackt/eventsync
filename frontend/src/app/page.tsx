@@ -10,7 +10,6 @@ import {
 
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -23,9 +22,6 @@ import { LOAD_DATA_FROM_API } from '@/dataSource';
 import { EventList } from '@/components/EventsList';
 import { MapMarker } from '@/components/MapMarker';
 import { AD } from '@/components/ad';
-import { CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Login } from '@/components/Login';
 import { SearchBar } from '@/components/search-bar';
 import { LoginIndicator } from '@/components/LoginIndicator';
 import { useAccount } from '@/zustand/userAccount';
@@ -54,7 +50,7 @@ export default function Home() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [username]);
 
   function loadData() {
     if(LOAD_DATA_FROM_API) {
@@ -136,7 +132,7 @@ export default function Home() {
           <Map position={[52.52476, 13.4041008]} zoom={13}>
             {
               filteredData.map((event) => (
-                <MapMarker key={event.event_id} event={event} />
+                <MapMarker key={event.event_id} event={event} likes={likes} />
               ))
             }
           </Map>
