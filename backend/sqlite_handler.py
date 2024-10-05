@@ -1,7 +1,11 @@
 from sqlite3 import connect
+from yaml import load as yaml_load
 
 
-DB_PATH = 'db/contentdb.db'
+with open("config.yaml", "rt", encoding="utf-8") as f:
+    config = yaml_load(f)
+
+DB_PATH = config["database_path"]
 
 
 class SQLiteHandler:
