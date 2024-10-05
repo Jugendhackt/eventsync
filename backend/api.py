@@ -25,11 +25,21 @@ def get_events(search_filter):
     search_filter = json_loads(search_filter)
     command = "SELECT * FROM events WHERE verified=1"
     for key, item in enumerate(search_filter):
+        if key == "tags":
+            continue
         command += f" WHERE {key} = '{item}'"
 
     with SQLiteHandler() as cur:
         cur.execute(command)
-        return cur.fetchall()
+        events = list(map(dict, cur.fetchall()))
+
+        for event in events:
+            cur.execute(
+                "SELECT tag FROM event_tags WHERE event_id = ?",
+                (event["event_id"],)
+            )
+            event["tags"] = ",".join(list(map(lambda x: x["tag"], cur.fetchall())))
+        return events
 
 
 @app.post("/events")
