@@ -27,5 +27,3 @@ for row in rows:
     response = requests.post("http://10.42.14.240:8000/events", json=data, headers=headers)
     print(response.status_code, response.reason)
     print(response.content)
-
-
