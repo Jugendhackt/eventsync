@@ -1,7 +1,7 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from uuid import uuid4
 from json import loads as json_loads
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from sqlite_handler import SQLiteHandler
 from event import Event
