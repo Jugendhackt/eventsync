@@ -8,8 +8,8 @@ from sqlite_handler import SQLiteHandler
 from event import Event
 
 from jwt_coder import jwt_encode, jwt_decode
-#jwt_encode takes data and secret and returns the token
-#JWT_decode takes token and returns decoded data
+
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
