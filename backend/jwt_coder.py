@@ -11,9 +11,9 @@ def jwt_decode(token, key):
     """takes token and returns decoded data"""
     try:
         decoded = jwt.decode(token, key=key, algorithms=['HS256', ])
-        return decoded == {"hallo": "hi"}
+        return decoded
     except ExpiredSignatureError as e:
         print(f'Expired, error: {e}')
     except DecodeError as e:
         print(f'Unable to decode the token, error: {e}')
-    return False
+    return None
