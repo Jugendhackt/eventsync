@@ -26,7 +26,7 @@ export function TagInput({ onTagsChange }: TagInputProps) {
 
   const addTag = () => {
     const trimmedInput = inputValue.trim()
-    if (trimmedInput && !tags.includes(trimmedInput)) {
+    if (trimmedInput && !tags.includes(trimmedInput) && tags.length < 5) {
       const newTags = [...tags, trimmedInput]
       setTags(newTags)
       setInputValue('')
@@ -42,20 +42,7 @@ export function TagInput({ onTagsChange }: TagInputProps) {
 
   return (
     <div className="w-full flex flex-col gap-2">
-      <div className="flex flex-wrap">
-        {tags.map((tag, index) => (
-          <Badge key={index} variant="secondary" className="text-sm py-1 px-2">
-            {tag}
-            <button
-              onClick={() => removeTag(tag)}
-              className="ml-1 focus:outline-none"
-              aria-label={`Remove ${tag} tag`}
-            >
-              <X className="h-3 w-3" />
-            </button>
-          </Badge>
-        ))}
-      </div>
+      <TagsViewer tags={tags} removeTag={removeTag} />
       <Input
         type="text"
         value={inputValue}
@@ -66,5 +53,26 @@ export function TagInput({ onTagsChange }: TagInputProps) {
         className="w-full"
       />
     </div>
+  )
+}
+
+export const TagsViewer = ({ tags, removeTag }: { tags: string[], removeTag: ((tag: string) => void) | null }) => {
+  return (
+    <div className="flex flex-wrap gap-2">
+        {tags.map((tag, index) => (
+          <Badge key={index} variant="secondary" className="text-sm py-1 px-2">
+            {tag}
+            { removeTag &&
+              <button
+              onClick={() => removeTag(tag)}
+              className="ml-1 focus:outline-none"
+              aria-label={`Remove ${tag} tag`}
+            >
+              <X className="h-3 w-3" />
+            </button>
+            }
+          </Badge>
+        ))}
+      </div>
   )
 }

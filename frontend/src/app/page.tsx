@@ -20,6 +20,7 @@ import { api } from '@/api/api';
 import { loadDataFromDrizzle } from '@/server/dbAccess';
 import { MapEvent } from '@/server/schema';
 import { LOAD_DATA_FROM_API } from '@/dataSource';
+import { EventList } from '@/components/EventsList';
 
 export default function Home() {
 
@@ -65,18 +66,17 @@ export default function Home() {
 
 
   return (
-    <div className="w-full h-screen flex flex-col">
-      <div className="w-full h-20 bg-slate-50 flex flex-row pl-10 pr-10 justify-between items-center">
+    <div className="w-full h-svh flex h-max-[100%] flex-col">
+      <div className="w-full pt-4 pb-4 bg-slate-50 flex flex-row pl-10 pr-10 justify-between items-center">
         <p className="text-xl font-bold">Jugendfinder</p>
 
         {
-          loading ? <p>Loading...</p> : error ? <p>Ein Fehler ist aufgetreten</p> : (
-            <></>
-          )
+          loading ? <p>Loading...</p> : error ? <p>Ein Fehler ist aufgetreten</p> : 
+            <div>Über {data.length} Events verfügbar</div>
         }
 
         <div>
-          <Dialog open={openNewDialog}>
+          <Dialog open={openNewDialog} onOpenChange={setOpenNewDialog}>
             <DialogTrigger><Button onClick={()=>setOpenNewDialog(true)} variant="outline">Neuer Eintrag</Button></DialogTrigger>
             <DialogContent className='h-2/3 overflow-scroll'>
               <DialogHeader>
@@ -93,17 +93,18 @@ export default function Home() {
         </div>
 
       </div>
-      <div className="flex flex-row w-screen h-full justify-stretch">
+      <div className="flex flex-row w-screen h-full overflow-hidden justify-stretch">
         <div className='w-1/3 max-w-100 md:flex hidden flex-col'>
           <div className="w-full h-20 flex flex-row pl-4 pr-4 justify-between items-center">
-            <div className="flex flex-row gap-3 items-center"> <SlidersHorizontal />
-              <p className="text-xl font-bold">Filter</p>
-            </div>
+            <Button className="flex flex-row gap-3 items-center"> <SlidersHorizontal />
+              <p className="font-bold">Filter</p>
+            </Button>
 
             <Button variant="outline">Filter zurücksetzen</Button>
 
           </div>
           <Separator />
+          <EventList data={data} />
         </div>
         <div className=" w-full">
 
