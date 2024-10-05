@@ -21,7 +21,7 @@ app.add_middleware(
 
 
 @app.get("/events")
-def read_events(search_filter):
+def get_events(search_filter):
     search_filter = json_loads(search_filter)
     command = "SELECT * FROM events WHERE verified=1"
     for key, item in enumerate(search_filter):
@@ -62,13 +62,13 @@ def get_events_admin(search_filter):
     
 
 @app.post("/admin")
-def verify_events(event_id: str):
+def verify_event(event_id: str):
     with SQLiteHandler() as cur:
         cur.execute("UPDATE events SET verified=1 WHERE id=?", (event_id,))
 
 
 @app.delete("/admin")
-def delete_events(event_id: str):
+def delete_event(event_id: str):
     with SQLiteHandler() as cur:
         cur.execute("DELETE FROM events WHERE id=?", (event_id, ))
     return "success"
