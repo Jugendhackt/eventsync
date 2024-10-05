@@ -1,5 +1,10 @@
 # JugendFinder
 
+## Projekt description
+
+### Our Goals
+Our Projekt Jugendfinder provides a platform for event hosters and allows Teens to finde Events in their arrea.
+
 ## How to start?
 
 ### Frontend:
@@ -28,5 +33,3 @@
   ```bash
   fastapi run main.py
   ```
-
-## Projekt description
