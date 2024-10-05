@@ -69,7 +69,7 @@ def create_event(event: Event):
                 "INSERT INTO event_tags (event_id, tag) VALUES (?, ?);",
                 (event_id, tag)
             )
-    return "success"
+    return {"result": "success"}
 
 
 @app.get("/admin")
@@ -93,7 +93,7 @@ def get_events_admin(request: Request, search_filter):
             )
             event["tags"] = ",".join(list(map(lambda x: x["tag"], cur.fetchall())))
         return events
-    return "failed"
+    return {"result": "failed"}
 
 
 @app.post("/admin")
@@ -101,9 +101,8 @@ def verify_event(request: Request, event_id: str):
     if check_cookie(request) is True:
         with SQLiteHandler() as cur:
             cur.execute("UPDATE events SET verified=1 WHERE event_id=?", (event_id,))
-            return {"message": "toll du bist drinnen bro"}
-    else:
-        return {"message": "sry Bro"}
+            return {"result": "success"}
+    return {"result": "failed"}
 
 
 @app.delete("/admin")
@@ -111,17 +110,19 @@ def delete_event(request: Request, event_id: str):
     if check_cookie(request) is True:
         with SQLiteHandler() as cur:
             cur.execute("DELETE FROM events WHERE event_id=?", (event_id, ))
-        return {"message": "toll du bist drinnen bro"}
-    return {"message": "sry Bro"}
+        return {"result": "success"}
+    return {"result": "failed"}
 
 
 @app.post("/login")
-def login(pw: str, response: Response):
-    if pw == "1234":
+def login(login_data: dict, response: Response):
+    password, username = login_data["password"], login_data["username"]
+
+    if password == "1234":
         jwt_token = jwt_encode({"hallo": "hi"}, "key")
         response.set_cookie(key="key", value=jwt_token)
         return {"message": "cookie übergeben :)"}
-    return {"error": "Passwort falsch"}
+    return {"result": "failed", "message": "password incorrect"}
 
 
 if __name__ == "__main__":
