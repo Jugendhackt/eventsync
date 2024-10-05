@@ -28,6 +28,6 @@ for row in rows:
     titles = ("name", "author", "description", "hrtime", "location", "tags", "website", "lat", "lon", "deleteAfter", "time")
     data = { titles[i]: row[i] for i in range(len(row)) }
     print(headers, data)
-    response = requests.post(url, json=data, headers=headers)
+    response = requests.post(url, json=data, headers=headers, timeout=5000)
     print(response.status_code, response.reason)
     print(response.content)
