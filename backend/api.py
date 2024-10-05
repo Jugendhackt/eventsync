@@ -1,12 +1,12 @@
 from uuid import uuid4
 from json import loads as json_loads
-from fastapi import FastAPI, Response, Request, HTTPException, status
+from fastapi import FastAPI, Response, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run as uvicorn_run
 
 from sqlite_handler import SQLiteHandler
 from event import Event
-from jwt_coder import jwt_encode, jwt_decode
+from jwt_coder import jwt_encode, check_token, check_token_admin
 from hashing import to_hash
 
 
@@ -22,23 +22,6 @@ app.add_middleware(
 
 with open("secret_key", "rt", encoding="utf-8") as f:
     SECRET_KEY = f.read()
-
-
-def check_token(request):
-    token = request.headers.get("token")
-    if token is None:
-        return False
-    return jwt_decode(token, SECRET_KEY) is not None
-
-
-def check_token_admin(request):
-    token = request.headers.get("token")
-    if token is None:
-        return False
-    result = jwt_decode(token, SECRET_KEY)
-    if result is None:
-        return False
-    return result.get("is_admin")
 
 
 @app.get("/events")
@@ -109,6 +92,16 @@ def get_events_admin(request: Request, search_filter):
     return events
 
 
+@app.get("/admin/users")
+def get_users_admin(request: Request):
+    if not check_token_admin(request):
+        raise HTTPException(status_code=401)
+
+    with SQLiteHandler() as cur:
+        cur.execute("SELECT user_id, username, display_name, is_admin FROM users")
+        return cur.fetchall()
+
+
 @app.post("/admin")
 def verify_event(request: Request, event_id: str):
     if not check_token_admin(request):
@@ -153,19 +146,31 @@ def login(login_data: dict, response: Response):
 
 
 @app.post("/register")
-def create_user(username, password, display_name):
+def create_user(user_data: dict):
+    username, password, display_name = user_data["username"], user_data["password"], user_data["display_name"]
     if display_name == "":
         raise HTTPException(status_code=400, detail="display name cannot be empty")
+
     with SQLiteHandler() as cur:
         cur.execute("SELECT username FROM users WHERE username=?", (username,))
         if len(cur.fetchall()) != 0:
             raise HTTPException(status_code=409, detail="Chosen username is already in use")
+
         hashed_password = to_hash(password, salt=username)
         cur.execute(
-            "INSERT INTO user (user_id, username, hashed_password, is_admin, display_name) VALUE (?, ?, ?, ?, ?)",
-            (uuid4(), username, hashed_password, 0, display_name)
+            "INSERT INTO users (user_id, username, hashed_password, is_admin, display_name) VALUES (?, ?, ?, ?, ?)",
+            (uuid4().hex, username, hashed_password, 0, display_name)
         )
-    return {"success": True}
+
+    jwt_token = jwt_encode({"is_admin": False}, SECRET_KEY)
+
+    return {
+            "success": True,
+            "token": jwt_token,
+            "is_admin": False,
+            "username": username,
+            "display_name": display_name
+        }
 
 
 if __name__ == "__main__":
