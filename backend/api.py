@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from uuid import uuid4
+from pydantic import BaseModel
 from json import loads as json_loads
 
 from sqlite_handler import SQLiteHandler
@@ -15,6 +16,18 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+class Event(BaseModel):
+    lat: float
+    lon: float
+    name: str
+    author: str
+    location: str
+    hrtime: str
+    deleteAfter: int
+    time: str
+    website: str
+    tags: str
+    description: str
 
 @app.get("/events")
 def read_root():
@@ -24,7 +37,8 @@ def read_root():
 
 
 @app.post("/events")
-def create_event(event):
+def create_event(event: Event):
+    print("event")
     event = json_loads(event)
     with SQLiteHandler() as cur:
         cur.execute(
@@ -37,3 +51,4 @@ def create_event(event):
             (event["lat"], event["lon"], event["name"], event["author"], event["location"],
              event["hrtime"], event["deleteAfter"], event["time"], event["website"],
              event["tags"], event["description"], uuid4().hex))
+        return {"message": "Event created successfully"}
