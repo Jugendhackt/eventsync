@@ -20,7 +20,7 @@ app.add_middleware(
 @app.get("/events")
 def read_root(search_filter):
     search_filter = json_loads(search_filter)
-    command = "SELECT * FROM events WHERE verified=True"
+    command = "SELECT * FROM events WHERE verified=1"
     for key, item in enumerate(search_filter):
         command += f" WHERE {key} = '{item}'"
 
