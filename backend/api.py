@@ -1,12 +1,12 @@
 from uuid import uuid4
 from json import loads as json_loads
-from fastapi import FastAPI, Response, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run as uvicorn_run
 
 from sqlite_handler import SQLiteHandler
 from event import Event
-from jwt_coder import jwt_encode, check_token, check_token_admin
+from jwt_coder import jwt_encode, check_token, check_token_admin, check_token_admin_deco
 from hashing import to_hash
 
 
@@ -18,10 +18,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-
-
-with open("secret_key", "rt", encoding="utf-8") as f:
-    SECRET_KEY = f.read()
 
 
 @app.get("/events")
@@ -93,13 +89,22 @@ def get_events_admin(request: Request, search_filter):
 
 
 @app.get("/admin/users")
-def get_users_admin(request: Request):
+@check_token_admin_deco
+def get_users_admin(request: Request, _):
+    with SQLiteHandler() as cur:
+        cur.execute("SELECT user_id, username, display_name, is_admin FROM users")
+        return cur.fetchall()
+
+
+@app.delete("/admin/user")
+def delete_user(request: Request, body: dict):
+    user_id = body["user_id"]
     if not check_token_admin(request):
         raise HTTPException(status_code=401)
 
     with SQLiteHandler() as cur:
-        cur.execute("SELECT user_id, username, display_name, is_admin FROM users")
-        return cur.fetchall()
+        cur.execute("DELETE FROM users WHERE user_id = ?", (user_id, ))
+    return {"success": True, "message": f"User deleted: {user_id}"}
 
 
 @app.post("/admin")
@@ -108,6 +113,16 @@ def verify_event(request: Request, event_id: str):
         raise HTTPException(status_code=401)
     with SQLiteHandler() as cur:
         cur.execute("UPDATE events SET verified=1 WHERE event_id=?", (event_id,))
+        return {"success": True}
+
+
+@app.post("/admin/op")
+def verify_event(request: Request, body: dict):
+    user_id, is_admin = body["user_id"], 1 if body["is_admin"] else 0
+    if not check_token_admin(request):
+        raise HTTPException(status_code=401)
+    with SQLiteHandler() as cur:
+        cur.execute("UPDATE users SET is_admin=? WHERE user_id=?", (is_admin, user_id))
         return {"success": True}
 
 
@@ -121,7 +136,7 @@ def delete_event(request: Request, event_id: str):
 
 
 @app.post("/login")
-def login(login_data: dict, response: Response):
+def login(login_data: dict):
     password, username = login_data["password"], login_data["username"]
 
     hashed_password = to_hash(password, salt=username)
@@ -134,7 +149,7 @@ def login(login_data: dict, response: Response):
         cur.execute("SELECT is_admin, username, display_name FROM users WHERE username=?", (username, ))
         user = cur.fetchone()
 
-        jwt_token = jwt_encode({"is_admin": bool(user["is_admin"])}, SECRET_KEY)
+        jwt_token = jwt_encode({"is_admin": bool(user["is_admin"])})
 
         return {
             "success": True,
@@ -145,7 +160,7 @@ def login(login_data: dict, response: Response):
         }
 
 
-@app.post("/register")
+@app.post("/user/register")
 def create_user(user_data: dict):
     username, password, display_name = user_data["username"], user_data["password"], user_data["display_name"]
     if display_name == "":
@@ -162,7 +177,7 @@ def create_user(user_data: dict):
             (uuid4().hex, username, hashed_password, 0, display_name)
         )
 
-    jwt_token = jwt_encode({"is_admin": False}, SECRET_KEY)
+    jwt_token = jwt_encode({"is_admin": False})
 
     return {
             "success": True,
