@@ -7,7 +7,7 @@ from uvicorn import run as uvicorn_run
 from sqlite_handler import SQLiteHandler
 from event import Event
 from jwt_coder import jwt_encode, jwt_decode
-from hashing import hash_it
+from hashing import to_hash
 
 
 app = FastAPI()
@@ -121,11 +121,19 @@ def delete_event(request: Request, event_id: str):
 def login(login_data: dict, response: Response):
     password, username = login_data["password"], login_data["username"]
 
-    if password == "1234" and username == "admin":
-        jwt_token = jwt_encode({"hallo": "hi"}, SECRET_KEY)
-        response.set_cookie(key=SECRET_KEY, value=jwt_token, samesite="none")
-        return {"success": True, "token": jwt_token}
-    raise HTTPException(status_code=401, detail="Incorrect username or password")
+    if password != "1234" or username != "admin":
+        #raise HTTPException(status_code=401, detail="Incorrect username or password")
+        pass
+
+    jwt_token = jwt_encode({"hallo": "hi"}, SECRET_KEY)
+
+    with SQLiteHandler() as cur:
+        cur.execute("SELECT is_admin FROM users WHERE username=?", (username, ))
+        return {
+            "success": True,
+            "token": jwt_token,
+            "is_admin": bool(cur.fetchone()["is_admin"])
+        }
 
 
 @app.post("/register")
@@ -136,7 +144,7 @@ def create_user(username, password, display_name):
         cur.execute("SELECT username FROM users WHERE username=?", (username,))
         if len(cur.fetchall()) != 0:
             raise HTTPException(status_code=409, detail="Chosen username is already in use")
-        hashed_password = hash_it(password + username + SECRET_KEY)
+        hashed_password = to_hash(password + username + SECRET_KEY)
         cur.execute(
             "INSERT INTO user (user_id, username, hashed_password, is_admin, display_name) VALUE (?, ?, ?, ?, ?)",
             (uuid4(), username, hashed_password, 0, display_name)
