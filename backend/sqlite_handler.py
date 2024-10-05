@@ -5,7 +5,7 @@ DB_PATH = 'db/contentdb.db'
 
 
 class SQLiteHandler:
-    def __init__(self, file=db_path):
+    def __init__(self, file=DB_PATH):
         self.file = file
 
     def __enter__(self):

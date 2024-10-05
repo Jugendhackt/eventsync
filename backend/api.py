@@ -18,7 +18,7 @@ app.add_middleware(
 
 
 @app.get("/events")
-def read_root(search_filter):
+def read_events(search_filter):
     search_filter = json_loads(search_filter)
     command = "SELECT * FROM events WHERE verified=1"
     for key, item in enumerate(search_filter):
@@ -44,3 +44,15 @@ def create_event(event: Event):
              event.hrtime, event.deleteAfter, event.time, event.website,
              event.tags, event.description, uuid4().hex, 0))
         return [{"message": "Event erfolgreich erstellt"}]
+    
+
+@app.get("/admin")
+def get_events_admin(search_filter):
+    search_filter = json_loads(search_filter)
+    command = "SELECT * FROM events WHERE verified=0"
+    for key, item in enumerate(search_filter):
+        command += f" WHERE {key} = '{item}'"
+
+    with SQLiteHandler() as cur:
+        cur.execute(command)
+        return cur.fetchall()
