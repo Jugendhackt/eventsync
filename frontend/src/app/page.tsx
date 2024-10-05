@@ -27,6 +27,7 @@ import { CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Login } from '@/components/Login';
 import { SearchBar } from '@/components/search-bar';
+import { LoginIndicator } from '@/components/LoginIndicator';
 
 export default function Home() {
 
@@ -84,7 +85,7 @@ export default function Home() {
             <div>Über {data.length}+ Events verfügbar</div>
         }
 
-        <div className="flex flex-row gap-4">
+        <div className="flex flex-row gap-4 items-center">
           <Dialog open={openNewDialog} onOpenChange={setOpenNewDialog}>
             <DialogTrigger><Button onClick={()=>setOpenNewDialog(true)} variant="outline">Neuer Eintrag</Button></DialogTrigger>
             <DialogContent className='h-2/3 overflow-scroll'>
@@ -98,7 +99,7 @@ export default function Home() {
             </DialogContent>
           </Dialog>
 
-          <Login />
+          <LoginIndicator />
 
 
         </div>
@@ -109,8 +110,6 @@ export default function Home() {
           <div className="w-full h-20 flex flex-row pl-4 pr-4 justify-between items-center gap-4">
             <SearchBar data={data} setFilteredData={setFilteredData}/>
             <Button className="flex flex-row gap-3 items-center"> <SlidersHorizontal /></Button>
-
-
           </div>
           <Separator />
           <EventList data={filteredData} />
