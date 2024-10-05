@@ -1,23 +1,19 @@
 import jwt
-from jwt.exceptions import ExpiredSignatureError
+from jwt.exceptions import ExpiredSignatureError, DecodeError
 
 
-data = { "pw": "1234" }
-SECRET = 'super_secure'
+def jwt_encode(data, secret):
+    """takes data and secret and returns the token"""
+    return jwt.encode(payload=data, key=secret)
 
-def jwt_encode(_data, _secret):
-    tokentemp = jwt.encode(payload=_data, key=_secret)
-    return tokentemp
 
-TOKEN = jwt_encode(data, SECRET)
-print(TOKEN)
-
-def jwt_decode(_token):
+def jwt_decode(token, key):
+    """takes token and returns decoded data"""
     try:
-        _decoded = jwt.decode(_token, key='super_secure', algorithms=['HS256', ])
-    except ExpiredSignatureError as error:
-        print(f'Unable to decode the token, error: {error}')
-    return _decoded
-
-decoded = jwt_decode(TOKEN)
-print(decoded)
+        decoded = jwt.decode(token, key=key, algorithms=['HS256', ])
+        return decoded == {"hallo": "hi"}
+    except ExpiredSignatureError as e:
+        print(f'Expired, error: {e}')
+    except DecodeError as e:
+        print(f'Unable to decode the token, error: {e}')
+    return False
