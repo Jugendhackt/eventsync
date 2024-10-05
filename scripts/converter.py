@@ -16,7 +16,7 @@ filename = filename if filename else "datatemp.csv" # overwrite input if empty
 if not os.path.isfile(filename):
     filename = "../" + filename # If the file doesn't exist in the current working directory, check the parent directory instead.
 
-with open(filename, 'r') as csvfile:
+with open(filename, 'r', encoding="utf8") as csvfile:
     csvreader = csv.reader(csvfile)
     next(csvreader)
 
