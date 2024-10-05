@@ -175,7 +175,9 @@ def login(login_data: dict):
 
 @app.post("/user/register")
 def create_user(user_data: dict):
-    username, password, display_name = user_data["username"], user_data["password"], user_data["display_name"]
+    username, password = user_data["username"], user_data["password"]
+    display_name = user_data["display_name"]
+
     if display_name == "":
         raise HTTPException(status_code=400, detail="display name cannot be empty")
 
@@ -187,7 +189,12 @@ def create_user(user_data: dict):
         hashed_password = to_hash(password, salt=username)
         user_id = uuid4().hex
         cur.execute(
-            "INSERT INTO users (user_id, username, hashed_password, is_admin, display_name) VALUES (?, ?, ?, ?, ?)",
+            """
+            INSERT INTO users 
+                (user_id, username, hashed_password, is_admin, display_name) 
+                VALUES 
+                (?, ?, ?, ?, ?)
+            """,
             (user_id, username, hashed_password, 0, display_name)
         )
 
