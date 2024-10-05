@@ -24,8 +24,7 @@ def check_cookie(request):
     print(cookie)
     if cookie is None:
         cookie = "Cookie"
-    decoded = jwt_decode(cookie, "key")
-    return decoded == {"hallo": "hi"}
+    return jwt_decode(cookie, "key") == {"hallo": "hi"}
 
 
 @app.get("/events")
@@ -69,7 +68,7 @@ def create_event(event: Event):
                 "INSERT INTO event_tags (event_id, tag) VALUES (?, ?);",
                 (event_id, tag)
             )
-    return {"result": "success"}
+    return {"success": True}
 
 
 @app.get("/admin")
@@ -93,7 +92,7 @@ def get_events_admin(request: Request, search_filter):
             )
             event["tags"] = ",".join(list(map(lambda x: x["tag"], cur.fetchall())))
         return events
-    return {"result": "failed"}
+    return {"success": False}
 
 
 @app.post("/admin")
@@ -101,8 +100,8 @@ def verify_event(request: Request, event_id: str):
     if check_cookie(request) is True:
         with SQLiteHandler() as cur:
             cur.execute("UPDATE events SET verified=1 WHERE event_id=?", (event_id,))
-            return {"result": "success"}
-    return {"result": "failed"}
+            return {"success": True}
+    return {"success": False}
 
 
 @app.delete("/admin")
@@ -110,8 +109,8 @@ def delete_event(request: Request, event_id: str):
     if check_cookie(request) is True:
         with SQLiteHandler() as cur:
             cur.execute("DELETE FROM events WHERE event_id=?", (event_id, ))
-        return {"result": "success"}
-    return {"result": "failed"}
+        return {"success": True}
+    return {"success": False}
 
 
 @app.post("/login")
@@ -121,8 +120,8 @@ def login(login_data: dict, response: Response):
     if password == "1234" and username == "admin":
         jwt_token = jwt_encode({"hallo": "hi"}, "key")
         response.set_cookie(key="key", value=jwt_token)
-        return {"result": "success"}
-    return {"result": "failed", "message": "password incorrect"}
+        return {"success": True}
+    return {"success": False, "message": "password incorrect"}
 
 
 if __name__ == "__main__":
