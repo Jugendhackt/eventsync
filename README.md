@@ -1,4 +1,14 @@
-HERE IS THE TEMPORARY SPREADSHEET: https://docs.google.com/spreadsheets/d/1MmyUnfM6psTVlD2WkDZ7NlfXXS5guX01clyraYXKyAE/edit?usp=sharing
+# \<Temp>
+
+Spreadsheet: 
+
+https://docs.google.com/spreadsheets/d/1MmyUnfM6psTVlD2WkDZ7NlfXXS5guX01clyraYXKyAE/edit?usp=sharing
+
+ToDo:
+
+https://docs.google.com/document/d/1qFk-Kr9M6JtQugtp9kUPIhloiRsq3DxRryUZ7SjmLYw/edit?usp=sharing
+
+# <\Temp>
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
