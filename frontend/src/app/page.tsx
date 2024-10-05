@@ -22,6 +22,7 @@ import { MapEvent } from '@/server/schema';
 import { LOAD_DATA_FROM_API } from '@/dataSource';
 import { EventList } from '@/components/EventsList';
 import { MapMarker } from '@/components/MapMarker';
+import { AD } from '@/components/ad';
 
 export default function Home() {
 
@@ -107,6 +108,7 @@ export default function Home() {
           </div>
           <Separator />
           <EventList data={data} />
+          <AD />
         </div>
         <div className=" w-full">
 

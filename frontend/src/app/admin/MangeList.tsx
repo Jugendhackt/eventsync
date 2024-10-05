@@ -40,7 +40,7 @@ export const ManageList = (props: {loadData: ()=>Promise<MapEvent[]>, verifyable
     }, []);
 
 return(
-    <Card className="m-7">
+    <Card className="mt-4 mr-4 ml-4">
     <CardHeader>
         <CardTitle>{props.headerText}</CardTitle>
         <CardDescription>{props.headerDescription}</CardDescription>
