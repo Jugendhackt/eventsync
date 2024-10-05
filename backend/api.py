@@ -99,7 +99,7 @@ def get_events_admin(request: Request, search_filter):
 
 @app.get("/admin/users")
 @check_token_admin_deco
-def get_users_admin(request: Request, _):
+def get_users_admin(_: Request, __: dict):
     with SQLiteHandler() as cur:
         cur.execute("SELECT user_id, username, display_name, is_admin FROM users")
         return cur.fetchall()
@@ -107,7 +107,7 @@ def get_users_admin(request: Request, _):
 
 @app.delete("/admin/user")
 @check_token_admin_deco
-def delete_user(request: Request, body: dict):
+def delete_user(_: Request, body: dict):
     user_id = body["user_id"]
     with SQLiteHandler() as cur:
         cur.execute("DELETE FROM users WHERE user_id = ?", (user_id, ))
@@ -116,7 +116,7 @@ def delete_user(request: Request, body: dict):
 
 @app.post("/admin")
 @check_token_admin_deco
-def verify_event(request: Request, body: dict):
+def verify_event(_: Request, body: dict):
     event_id = body["event_id"]
     with SQLiteHandler() as cur:
         cur.execute("UPDATE events SET verified=1 WHERE event_id=?", (event_id,))
@@ -125,7 +125,7 @@ def verify_event(request: Request, body: dict):
 
 @app.post("/admin/op")
 @check_token_admin_deco
-def verify_event(request: Request, body: dict):
+def make_admin(_: Request, body: dict):
     user_id, is_admin = body["user_id"], 1 if body["is_admin"] else 0
     with SQLiteHandler() as cur:
         cur.execute("UPDATE users SET is_admin=? WHERE user_id=?", (is_admin, user_id))
@@ -152,7 +152,10 @@ def login(login_data: dict):
         if cur.fetchone()["hashed_password"] != hashed_password:
             raise HTTPException(status_code=401, detail="Incorrect username or password")
 
-        cur.execute("SELECT is_admin, username, display_name, user_id FROM users WHERE username=?", (username, ))
+        cur.execute(
+            "SELECT is_admin, username, display_name, user_id FROM users WHERE username=?",
+            (username, )
+        )
         user = cur.fetchone()
 
         jwt_token = jwt_encode({
