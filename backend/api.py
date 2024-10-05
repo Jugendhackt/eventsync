@@ -7,6 +7,7 @@ from uvicorn import run as uvicorn_run
 from sqlite_handler import SQLiteHandler
 from event import Event
 
+from jwt_coder import JWT_encode, JWT_decode
 
 app = FastAPI()
 app.add_middleware(
