@@ -43,4 +43,4 @@ def create_event(event: Event):
             (event.lat, event.lon, event.name, event.author, event.location,
              event.hrtime, event.deleteAfter, event.time, event.website,
              event.tags, event.description, uuid4().hex, 0))
-        return {"message": "Event created successfully"}
+        return [{"message": "Event erfolgreich erstellt"}]

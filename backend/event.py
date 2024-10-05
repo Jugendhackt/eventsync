@@ -13,4 +13,3 @@ class Event(BaseModel):
     website:  str
     tags: str
     description: str
-    id: str
