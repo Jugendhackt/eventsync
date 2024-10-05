@@ -28,7 +28,17 @@ def check_token(request):
     token = request.headers.get("token")
     if token is None:
         return False
-    return jwt_decode(token, SECRET_KEY)
+    return jwt_decode(token, SECRET_KEY) is not None
+
+
+def check_token_admin(request):
+    token = request.headers.get("token")
+    if token is None:
+        return False
+    result = jwt_decode(token, SECRET_KEY)
+    if result is None:
+        return False
+    return result.get("is_admin")
 
 
 @app.get("/events")
@@ -77,7 +87,7 @@ def create_event(event: Event):
 
 @app.get("/admin")
 def get_events_admin(request: Request, search_filter):
-    if not check_token(request):
+    if not check_token_admin(request):
         raise HTTPException(status_code=401)
     search_filter = json_loads(search_filter)
     command = "SELECT * FROM events WHERE verified=0"
@@ -101,7 +111,7 @@ def get_events_admin(request: Request, search_filter):
 
 @app.post("/admin")
 def verify_event(request: Request, event_id: str):
-    if not check_token(request):
+    if not check_token_admin(request):
         raise HTTPException(status_code=401)
     with SQLiteHandler() as cur:
         cur.execute("UPDATE events SET verified=1 WHERE event_id=?", (event_id,))
@@ -110,7 +120,7 @@ def verify_event(request: Request, event_id: str):
 
 @app.delete("/admin")
 def delete_event(request: Request, event_id: str):
-    if not check_token(request):
+    if not check_token_admin(request):
         raise HTTPException(status_code=401)
     with SQLiteHandler() as cur:
         cur.execute("DELETE FROM events WHERE event_id=?", (event_id, ))
@@ -121,18 +131,24 @@ def delete_event(request: Request, event_id: str):
 def login(login_data: dict, response: Response):
     password, username = login_data["password"], login_data["username"]
 
-    if password != "1234" or username != "admin":
-        #raise HTTPException(status_code=401, detail="Incorrect username or password")
-        pass
-
-    jwt_token = jwt_encode({"hallo": "hi"}, SECRET_KEY)
+    hashed_password = to_hash(password, salt=username)
 
     with SQLiteHandler() as cur:
-        cur.execute("SELECT is_admin FROM users WHERE username=?", (username, ))
+        cur.execute("SELECT hashed_password FROM users WHERE username=?", (username,))
+        if cur.fetchone()["hashed_password"] != hashed_password:
+            raise HTTPException(status_code=401, detail="Incorrect username or password")
+
+        cur.execute("SELECT is_admin, username, display_name FROM users WHERE username=?", (username, ))
+        user = cur.fetchone()
+
+        jwt_token = jwt_encode({"is_admin": bool(user["is_admin"])}, SECRET_KEY)
+
         return {
             "success": True,
             "token": jwt_token,
-            "is_admin": bool(cur.fetchone()["is_admin"])
+            "is_admin": bool(user["is_admin"]),
+            "username": user["username"],
+            "display_name": user["display_name"]
         }
 
 
@@ -144,7 +160,7 @@ def create_user(username, password, display_name):
         cur.execute("SELECT username FROM users WHERE username=?", (username,))
         if len(cur.fetchall()) != 0:
             raise HTTPException(status_code=409, detail="Chosen username is already in use")
-        hashed_password = to_hash(password + username + SECRET_KEY)
+        hashed_password = to_hash(password, salt=username)
         cur.execute(
             "INSERT INTO user (user_id, username, hashed_password, is_admin, display_name) VALUE (?, ?, ?, ?, ?)",
             (uuid4(), username, hashed_password, 0, display_name)
