@@ -72,8 +72,7 @@ def get_events_admin(search_filter):
                 "SELECT tag FROM event_tags WHERE event_id = ?",
                 (event["event_id"], )
             )
-            tags = ",".join(list(map(lambda x: x["tag"], cur.fetchall())))
-            event["tags"] = tags
+            event["tags"] = ",".join(list(map(lambda x: x["tag"], cur.fetchall())))
         return events
 
 
