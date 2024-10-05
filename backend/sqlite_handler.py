@@ -1,4 +1,4 @@
-from sqlite3 import connect
+from sqlite3 import connect, Row
 from yaml import load as yaml_load, SafeLoader
 
 
@@ -14,7 +14,7 @@ class SQLiteHandler:
 
     def __enter__(self):
         self.conn = connect(self.file)
-        # self.conn.row_factory = sqlite3.Row
+        self.conn.row_factory = Row
         return self.conn.cursor()
 
     def __exit__(self, err_type, value, traceback):
