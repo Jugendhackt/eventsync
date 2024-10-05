@@ -59,11 +59,22 @@ def get_events_admin(search_filter):
     search_filter = json_loads(search_filter)
     command = "SELECT * FROM events WHERE verified=0"
     for key, item in enumerate(search_filter):
+        if key == "tags":
+            continue
         command += f" WHERE {key} = '{item}'"
 
     with SQLiteHandler() as cur:
         cur.execute(command)
-        return cur.fetchall()
+        events = list(map(dict, cur.fetchall()))
+
+        for event in events:
+            cur.execute(
+                "SELECT tag FROM event_tags WHERE event_id = ?",
+                (event["event_id"], )
+            )
+            tags = ",".join(list(map(lambda x: x["tag"], cur.fetchall())))
+            event["tags"] = tags
+        return events
 
 
 @app.post("/admin")
@@ -84,7 +95,6 @@ def login(pw: str, response: Response):
     jwt_token = jwt_encode({}, "key")
     response.set_cookie(key="key", value=jwt_token)
     return {"message": "cookie übergeben :)"}
-
 
 
 if __name__ == "__main__":
