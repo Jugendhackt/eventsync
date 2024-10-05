@@ -127,5 +127,13 @@ def login(login_data: dict, response: Response):
     raise HTTPException(status_code=401, detail="Incorrect username or password")
 
 
+@app.post("/register")
+def create_user(username, hashed_password, is_admin, display_name):
+    user_id = uuid4()
+    command = "INSERT INTO user (user_id, username, hashed_password, is_admin, display_name) VALUE (?, ?, ?, ?, ?)", ()
+
+    with SQLiteHandler() as cur:
+
+
 if __name__ == "__main__":
     uvicorn_run(app, host="0.0.0.0", port=8000)
