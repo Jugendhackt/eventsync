@@ -8,7 +8,7 @@ from sqlite_handler import SQLiteHandler
 from event import Event
 
 from jwt_coder import jwt_encode, jwt_decode
-#JWT_encode takes data and secret and returns the token
+#jwt_encode takes data and secret and returns the token
 #JWT_decode takes token and returns decoded data
 app = FastAPI()
 app.add_middleware(
@@ -76,7 +76,7 @@ def delete_event(event_id: str):
 
 @app.post("/login")
 def login(pw: str, response: Response):
-    jwt_token = JWT_encode({}, "key")
+    jwt_token = jwt_encode({}, "key")
     response.set_cookie(key="key", value=jwt_token)
     return {"message": "cookie übergeben :)"}
 
