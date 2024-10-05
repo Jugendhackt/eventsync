@@ -44,6 +44,9 @@ next-env.d.ts
 # don't forget to set this
 /backend/SUPER-SECRET-PASSWORD
 
+# secret key for cookies
+/backend/secret_key
+
 ### DO NOT PUSH THE DAMN DATABASE
 /backend/db
 
