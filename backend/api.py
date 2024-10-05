@@ -122,17 +122,19 @@ def login(login_data: dict, response: Response):
     password, username = login_data["password"], login_data["username"]
 
     if password != "1234" or username != "admin":
-        #raise HTTPException(status_code=401, detail="Incorrect username or password")
-        pass
+        raise HTTPException(status_code=401, detail="Incorrect username or password")
 
     jwt_token = jwt_encode({"hallo": "hi"}, SECRET_KEY)
 
     with SQLiteHandler() as cur:
-        cur.execute("SELECT is_admin FROM users WHERE username=?", (username, ))
+        cur.execute("SELECT is_admin, username, display_name FROM users WHERE username=?", (username, ))
+        user = cur.fetchone()
         return {
             "success": True,
             "token": jwt_token,
-            "is_admin": bool(cur.fetchone()["is_admin"])
+            "is_admin": bool(user["is_admin"]),
+            "username": user["username"],
+            "display_name": user["display_name"]
         }
 
 
