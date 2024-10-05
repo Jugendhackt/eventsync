@@ -118,10 +118,10 @@ def delete_event(request: Request, event_id: str):
 def login(login_data: dict, response: Response):
     password, username = login_data["password"], login_data["username"]
 
-    if password == "1234":
+    if password == "1234" and username == "admin":
         jwt_token = jwt_encode({"hallo": "hi"}, "key")
         response.set_cookie(key="key", value=jwt_token)
-        return {"message": "cookie übergeben :)"}
+        return {"result": "success"}
     return {"result": "failed", "message": "password incorrect"}
 
 
