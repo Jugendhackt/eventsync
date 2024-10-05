@@ -130,13 +130,18 @@ def login(login_data: dict, response: Response):
 
 @app.post("/register")
 def create_user(username, password, display_name):
-    user_id = uuid4()
-    command = "INSERT INTO user (user_id, username, hashed_password, is_admin, display_name) VALUE (?, ?, ?, ?, ?)"
-
-    hashed_password = hash_it(password + username + SECRET_KEY)
-
     with SQLiteHandler() as cur:
+        user_id = uuid4()
+        command = "INSERT INTO user (user_id, username, hashed_password, is_admin, display_name) VALUE (?, ?, ?, ?, ?)"
+
+        hashed_password = hash_it(password + username + SECRET_KEY)
+
+        check_username = "SELECT username FROM user WHERE username=?"
+
         cur.execute(command, (user_id, username, hashed_password, 0, display_name))
+        cur.execute(check_username, (username))
+
+
 
 
 if __name__ == "__main__":
