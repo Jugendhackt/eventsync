@@ -5,7 +5,7 @@ import sys
 
 rows = []
 
-url = input("Input url to send requests to (leave empty for default): ")
+url = input("URL to send requests to: ")
 if not url:
     print("YOU NEED TO PROVIDE A URL.")
     print("dumbass")
