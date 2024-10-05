@@ -66,7 +66,7 @@ def verify_events(id: str):
         cur.execute(command)
 
 @app.delete("/admin")
-def delete_events(id: str)
+def delete_events(id: str):
     command = "DELETE * FROM events WHERE id=?", (id,)
 
     with SQLiteHandler() as cur:
