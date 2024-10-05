@@ -21,7 +21,7 @@ for row in rows:
     data = { titles[i]: row[i] for i in range(len(row)) }
     data["lat"] = 0
     data["lon"] = 0
-    data["time"] = "ja fickt euch"
+    data["time"] = ""
     headers = {'content-type': 'application/json'}
     print(headers, data)
     response = requests.post("http://10.42.14.240:8000/events", json=data, headers=headers)
