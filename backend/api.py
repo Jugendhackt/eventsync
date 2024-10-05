@@ -71,4 +71,3 @@ def delete_events(id: str):
 
     with SQLiteHandler() as cur:
         cur.execute(command)
-        
