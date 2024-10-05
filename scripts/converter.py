@@ -20,11 +20,8 @@ with open(filename, 'r') as csvfile:
         rows.append(row)
 
 for row in rows:
-    titles = ("name", "author", "description", "deleteAfter", "hrtime", "location", "tags", "website")
+    titles = ("name", "author", "description", "deleteAfter", "hrtime", "location", "tags", "website", "lat", "lon", "time")
     data = { titles[i]: row[i] for i in range(len(row)) }
-    data["lat"] = 0
-    data["lon"] = 0
-    data["time"] = ""
     headers = {'content-type': 'application/json'}
     print(headers, data)
     response = requests.post(url, json=data, headers=headers)
