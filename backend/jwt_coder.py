@@ -3,21 +3,21 @@ from jwt.exceptions import ExpiredSignatureError
 
 
 data = { "pw": "1234" }
-secret = 'super_secure'
+SECRET = 'super_secure'
 
-def JWT_encode(data, secret):
-    tokentemp = jwt.encode(payload=data, key=secret)
-    return(tokentemp)
+def jwt_encode(_data, _secret):
+    tokentemp = jwt.encode(payload=_data, key=_secret)
+    return tokentemp
 
-token = JWT_encode(data, secret)
-print(token)
+TOKEN = jwt_encode(data, SECRET)
+print(TOKEN)
 
-def JWT_decode(token):
+def jwt_decode(_token):
     try:
-        decoded = jwt.decode(token, key='super_secure', algorithms=['HS256', ])
+        _decoded = jwt.decode(_token, key='super_secure', algorithms=['HS256', ])
     except ExpiredSignatureError as error:
         print(f'Unable to decode the token, error: {error}')
-    return(decoded)
-        
-decoded = JWT_decode(token)
+    return _decoded
+
+decoded = jwt_decode(TOKEN)
 print(decoded)
