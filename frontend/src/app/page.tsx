@@ -26,6 +26,7 @@ import { AD } from '@/components/ad';
 import { CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Login } from '@/components/Login';
+import { SearchBar } from '@/components/search-bar';
 
 export default function Home() {
 
@@ -38,6 +39,7 @@ export default function Home() {
   ), [])
 
   const [data, setData] = useState<MapEvent[]>([]);
+  const [filteredData, setFilteredData] = useState<MapEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [openNewDialog, setOpenNewDialog] = useState(false);
@@ -51,6 +53,7 @@ export default function Home() {
       api.read().then((data) => {
         console.log(data);
          setData(data);
+         setFilteredData(data);
          setLoading(false);
          setError(null);
        }).catch((error) => {
@@ -62,6 +65,7 @@ export default function Home() {
       loadDataFromDrizzle().then((data) => {
         setData(data);
         setLoading(false);
+        setFilteredData(data);
         console.log(data);
       });
     }
@@ -102,23 +106,21 @@ export default function Home() {
       </div>
       <div className="flex flex-row w-screen h-full overflow-hidden justify-stretch">
         <div className='w-1/3 max-w-100 md:flex hidden flex-col'>
-          <div className="w-full h-20 flex flex-row pl-4 pr-4 justify-between items-center">
-            <Button className="flex flex-row gap-3 items-center"> <SlidersHorizontal />
-              <p className="font-bold">Filter</p>
-            </Button>
+          <div className="w-full h-20 flex flex-row pl-4 pr-4 justify-between items-center gap-4">
+            <SearchBar data={data} setFilteredData={setFilteredData}/>
+            <Button className="flex flex-row gap-3 items-center"> <SlidersHorizontal /></Button>
 
-            <Button variant="outline">Filter zurücksetzen</Button>
 
           </div>
           <Separator />
-          <EventList data={data} />
+          <EventList data={filteredData} />
           <AD />
         </div>
         <div className=" w-full">
 
           <Map position={[52.52476, 13.4041008]} zoom={13}>
             {
-              data.map((event) => (
+              filteredData.map((event) => (
                 <MapMarker key={event.event_id} event={event} />
               ))
             }
