@@ -25,40 +25,65 @@ def get_events(search_filter):
     search_filter = json_loads(search_filter)
     command = "SELECT * FROM events WHERE verified=1"
     for key, item in enumerate(search_filter):
+        if key == "tags":
+            continue
         command += f" WHERE {key} = '{item}'"
 
     with SQLiteHandler() as cur:
         cur.execute(command)
-        return cur.fetchall()
+        events = list(map(dict, cur.fetchall()))
+
+        for event in events:
+            cur.execute(
+                "SELECT tag FROM event_tags WHERE event_id = ?",
+                (event["event_id"],)
+            )
+            event["tags"] = ",".join(list(map(lambda x: x["tag"], cur.fetchall())))
+        return events
 
 
 @app.post("/events")
 def create_event(event: Event):
-    print("event")
+    event_id = uuid4().hex
     with SQLiteHandler() as cur:
         cur.execute(
             """
             INSERT INTO events 
             (lat, lon, name, author, location, hrtime, deleteAfter, time, 
-            website, tags, description, event_id, verified) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            website, description, event_id, verified) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             """,
-            (event.lat, event.lon, event.name, event.author, event.location,
-             event.hrtime, event.deleteAfter, event.time, event.website,
-             event.tags, event.description, uuid4().hex, 0))
-        return [{"message": "Event erfolgreich erstellt"}]
-    
+            (event.lat, event.lon, event.name, event.author, event.location, event.hrtime,
+             event.deleteAfter, event.time, event.website, event.description, event_id, 0))
+
+        for tag in event.tags.split(","):
+            cur.execute(
+                "INSERT INTO event_tags (event_id, tag) VALUES (?, ?);",
+                (event_id, tag)
+            )
+    return "success"
+
 
 @app.get("/admin")
 def get_events_admin(search_filter):
     search_filter = json_loads(search_filter)
     command = "SELECT * FROM events WHERE verified=0"
     for key, item in enumerate(search_filter):
+        if key == "tags":
+            continue
         command += f" WHERE {key} = '{item}'"
 
     with SQLiteHandler() as cur:
         cur.execute(command)
-        return cur.fetchall()
+        events = list(map(dict, cur.fetchall()))
+
+        for event in events:
+            cur.execute(
+                "SELECT tag FROM event_tags WHERE event_id = ?",
+                (event["event_id"], )
+            )
+            event["tags"] = ",".join(list(map(lambda x: x["tag"], cur.fetchall())))
+        return events
 
 
 @app.post("/admin")
@@ -79,7 +104,6 @@ def login(pw: str, response: Response):
     jwt_token = jwt_encode({}, "key")
     response.set_cookie(key="key", value=jwt_token)
     return {"message": "cookie übergeben :)"}
-
 
 
 if __name__ == "__main__":
