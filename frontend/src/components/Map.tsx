@@ -17,7 +17,7 @@ export default function Map(props: any) {
 
   useEffect(() => {
     if(event){
-      map!.flyTo([event.lat, event.lon], 13);
+      map?.flyTo([event.lat, event.lon], 13);
     }
   }, [event]);
 

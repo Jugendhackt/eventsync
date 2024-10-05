@@ -2,13 +2,20 @@ import { MapEvent } from '@/server/schema'
 import { create } from 'zustand'
 
 interface UserAccountState {
-    event: MapEvent | null
-    setEvent: (event: MapEvent | null) => void
+    username: string | null
+    isAdmin: boolean
+    setUsername: (username: string | null) => void
+    setIsAdmin: (isAdmin: boolean) => void
   }
 
 export const useAccount = create<UserAccountState>((set) => ({
-    event: null,
-    setEvent: (event:MapEvent | null) => {
-        set((state) => ({ event: event}));
+    username: window.localStorage.getItem('username') || null,
+    isAdmin: false,
+    
+    setUsername: (username: string | null) => {
+        set((state) => ({ username: username }));
+        if(username){
+            window.localStorage.setItem('username', username);
+        }
     }
   }))

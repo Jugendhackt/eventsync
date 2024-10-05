@@ -6,26 +6,29 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { api } from "@/api/api"
+import { useAccount } from "@/zustand/userAccount"
 
 export const Login = () => {
 
-    const [username, setUsername] = useState("")
+    const [localUsername, setLocalUsername] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
+    const {username,setUsername} = useAccount();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         // Here you would typically handle the login logic
         // For this example, we'll just show an error if the fields are empty
-        if (!username || !password) {
+        if (!localUsername || !password) {
             setError("Please fill in all fields")
         } else {
-            api.login(username, password).then((data) => {
+            api.login(localUsername, password).then((data) => {
                 console.log(data);
                 if(data.success){
                     window.localStorage.setItem("token", data.token);
                     console.log("Login successful");
-                    window.location.href = "/admin";
+                    setUsername("Admin")
+                    
                 }else{
                     setError("Falsche Anmeldedaten");
                 }
@@ -33,7 +36,7 @@ export const Login = () => {
                 setError("Fehler bei der Anmeldung");
             });
             setError("")
-            console.log("Login attempted with:", { username, password })
+            console.log("Login attempted with:", { localUsername, password })
         }
     }
     return (<Dialog>
@@ -53,8 +56,8 @@ export const Login = () => {
                             id="username"
                             type="text"
                             placeholder="Max Mustermann"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            value={localUsername}
+                            onChange={(e) => setLocalUsername(e.target.value)}
                             required
                         />
                     </div>
