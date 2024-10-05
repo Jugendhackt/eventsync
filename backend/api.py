@@ -76,44 +76,44 @@ def create_event(event: Event):
 
 @app.get("/admin")
 def get_events_admin(request: Request, search_filter):
-    if check_token(request):
-        search_filter = json_loads(search_filter)
-        command = "SELECT * FROM events WHERE verified=0"
-        for key, item in enumerate(search_filter):
-            if key == "tags":
-                continue
-            command += f" WHERE {key} = '{item}'"
+    if not check_token(request):
+        raise HTTPException(status_code=401)
+    search_filter = json_loads(search_filter)
+    command = "SELECT * FROM events WHERE verified=0"
+    for key, item in enumerate(search_filter):
+        if key == "tags":
+            continue
+        command += f" WHERE {key} = '{item}'"
 
-        with SQLiteHandler() as cur:
-            cur.execute(command)
-            events = list(map(dict, cur.fetchall()))
+    with SQLiteHandler() as cur:
+        cur.execute(command)
+        events = list(map(dict, cur.fetchall()))
 
-            for event in events:
-                cur.execute(
-                    "SELECT tag FROM event_tags WHERE event_id = ?",
-                    (event["event_id"], )
-                )
-                event["tags"] = ",".join(list(map(lambda x: x["tag"], cur.fetchall())))
-        return {"success": True, "data": events}
-    raise HTTPException(status_code=401)
+        for event in events:
+            cur.execute(
+                "SELECT tag FROM event_tags WHERE event_id = ?",
+                (event["event_id"], )
+            )
+            event["tags"] = ",".join(list(map(lambda x: x["tag"], cur.fetchall())))
+    return events
 
 
 @app.post("/admin")
 def verify_event(request: Request, event_id: str):
-    if check_token(request):
-        with SQLiteHandler() as cur:
-            cur.execute("UPDATE events SET verified=1 WHERE event_id=?", (event_id,))
-            return {"success": True}
-    raise HTTPException(status_code=401)
+    if not check_token(request):
+        raise HTTPException(status_code=401)
+    with SQLiteHandler() as cur:
+        cur.execute("UPDATE events SET verified=1 WHERE event_id=?", (event_id,))
+        return {"success": True}
 
 
 @app.delete("/admin")
 def delete_event(request: Request, event_id: str):
-    if check_token(request):
-        with SQLiteHandler() as cur:
-            cur.execute("DELETE FROM events WHERE event_id=?", (event_id, ))
-        return {"success": True}
-    raise HTTPException(status_code=401)
+    if not check_token(request):
+        raise HTTPException(status_code=401)
+    with SQLiteHandler() as cur:
+        cur.execute("DELETE FROM events WHERE event_id=?", (event_id, ))
+    return {"success": True}
 
 
 @app.post("/login")
@@ -125,6 +125,14 @@ def login(login_data: dict, response: Response):
         response.set_cookie(key=SECRET_KEY, value=jwt_token, samesite="none")
         return {"success": True, "token": jwt_token}
     raise HTTPException(status_code=401, detail="Incorrect username or password")
+
+
+@app.post("/register")
+def create_user(username, hashed_password, is_admin, display_name):
+    user_id = uuid4()
+    command = "INSERT INTO user (user_id, username, hashed_password, is_admin, display_name) VALUE (?, ?, ?, ?, ?)", ()
+
+    with SQLiteHandler() as cur:
 
 
 if __name__ == "__main__":
