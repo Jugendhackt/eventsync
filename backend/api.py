@@ -2,6 +2,7 @@ from uuid import uuid4
 from json import loads as json_loads
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from uvicorn import run as uvicorn_run
 
 from sqlite_handler import SQLiteHandler
 from event import Event
@@ -71,3 +72,7 @@ def delete_events(id: str):
 
     with SQLiteHandler() as cur:
         cur.execute(command)
+
+
+if __name__ == "__main__":
+    uvicorn_run(app, host="0.0.0.0", port=30000)
