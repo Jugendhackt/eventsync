@@ -1,12 +1,12 @@
 from uuid import uuid4
 from json import loads as json_loads
-from fastapi import FastAPI, Response, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run as uvicorn_run
 
 from sqlite_handler import SQLiteHandler
 from event import Event
-from jwt_coder import jwt_encode, check_token, check_token_admin
+from jwt_coder import jwt_encode, user_id_from_request, check_token_admin, check_token_admin_deco
 from hashing import to_hash
 
 
@@ -18,10 +18,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-
-
-with open("secret_key", "rt", encoding="utf-8") as f:
-    SECRET_KEY = f.read()
 
 
 @app.get("/events")
@@ -68,6 +64,15 @@ def create_event(event: Event):
     return {"success": True}
 
 
+@app.post("/event/like")
+def like_event(request: Request, body: dict):
+    event_id, like, user_id = body["event_id"], body["like"], user_id_from_request(request)
+    with SQLiteHandler() as cur:
+        cur.execute("DELETE FROM likes WHERE event_id = ? AND user_id = ?", (event_id, user_id))
+        if like:
+            cur.execute("INSERT INTO likes (user_id, event_id) VALUES (?, ?)", (user_id, event_id))
+
+
 @app.get("/admin")
 def get_events_admin(request: Request, search_filter):
     if not check_token_admin(request):
@@ -93,21 +98,37 @@ def get_events_admin(request: Request, search_filter):
 
 
 @app.get("/admin/users")
-def get_users_admin(request: Request):
-    if not check_token_admin(request):
-        raise HTTPException(status_code=401)
-
+@check_token_admin_deco
+def get_users_admin(_: Request, __: dict):
     with SQLiteHandler() as cur:
         cur.execute("SELECT user_id, username, display_name, is_admin FROM users")
         return cur.fetchall()
 
 
+@app.delete("/admin/user")
+@check_token_admin_deco
+def delete_user(_: Request, body: dict):
+    user_id = body["user_id"]
+    with SQLiteHandler() as cur:
+        cur.execute("DELETE FROM users WHERE user_id = ?", (user_id, ))
+    return {"success": True, "message": f"User deleted: {user_id}"}
+
+
 @app.post("/admin")
-def verify_event(request: Request, event_id: str):
-    if not check_token_admin(request):
-        raise HTTPException(status_code=401)
+@check_token_admin_deco
+def verify_event(_: Request, body: dict):
+    event_id = body["event_id"]
     with SQLiteHandler() as cur:
         cur.execute("UPDATE events SET verified=1 WHERE event_id=?", (event_id,))
+        return {"success": True}
+
+
+@app.post("/admin/op")
+@check_token_admin_deco
+def make_admin(_: Request, body: dict):
+    user_id, is_admin = body["user_id"], 1 if body["is_admin"] else 0
+    with SQLiteHandler() as cur:
+        cur.execute("UPDATE users SET is_admin=? WHERE user_id=?", (is_admin, user_id))
         return {"success": True}
 
 
@@ -121,7 +142,7 @@ def delete_event(request: Request, event_id: str):
 
 
 @app.post("/login")
-def login(login_data: dict, response: Response):
+def login(login_data: dict):
     password, username = login_data["password"], login_data["username"]
 
     hashed_password = to_hash(password, salt=username)
@@ -131,10 +152,17 @@ def login(login_data: dict, response: Response):
         if cur.fetchone()["hashed_password"] != hashed_password:
             raise HTTPException(status_code=401, detail="Incorrect username or password")
 
-        cur.execute("SELECT is_admin, username, display_name FROM users WHERE username=?", (username, ))
+        cur.execute(
+            "SELECT is_admin, username, display_name, user_id FROM users WHERE username=?",
+            (username, )
+        )
         user = cur.fetchone()
 
-        jwt_token = jwt_encode({"is_admin": bool(user["is_admin"])}, SECRET_KEY)
+        jwt_token = jwt_encode({
+            "is_admin": bool(user["is_admin"]),
+            "user_id": user["user_id"],
+            "username": user["username"]
+        })
 
         return {
             "success": True,
@@ -145,7 +173,7 @@ def login(login_data: dict, response: Response):
         }
 
 
-@app.post("/register")
+@app.post("/user/register")
 def create_user(user_data: dict):
     username, password, display_name = user_data["username"], user_data["password"], user_data["display_name"]
     if display_name == "":
@@ -157,12 +185,17 @@ def create_user(user_data: dict):
             raise HTTPException(status_code=409, detail="Chosen username is already in use")
 
         hashed_password = to_hash(password, salt=username)
+        user_id = uuid4().hex
         cur.execute(
             "INSERT INTO users (user_id, username, hashed_password, is_admin, display_name) VALUES (?, ?, ?, ?, ?)",
-            (uuid4().hex, username, hashed_password, 0, display_name)
+            (user_id, username, hashed_password, 0, display_name)
         )
 
-    jwt_token = jwt_encode({"is_admin": False}, SECRET_KEY)
+    jwt_token = jwt_encode({
+        "is_admin": False,
+        "user_id": user_id,
+        "username": username
+    })
 
     return {
             "success": True,
@@ -171,6 +204,14 @@ def create_user(user_data: dict):
             "username": username,
             "display_name": display_name
         }
+
+
+@app.get("/user/likes")
+def get_likes(request: Request):
+    user_id = user_id_from_request(request)
+    with SQLiteHandler() as cur:
+        cur.execute("SELECT * FROM likes WHERE user_id=?", (user_id, ))
+        return list(map(lambda x: x["event_id"], cur.fetchall()))
 
 
 if __name__ == "__main__":

@@ -1,14 +1,16 @@
 import jwt
 from jwt.exceptions import ExpiredSignatureError, DecodeError
 
+from fastapi import Request, HTTPException
+
 
 with open("secret_key", "rt", encoding="utf-8") as f:
     SECRET_KEY = f.read()
 
 
-def jwt_encode(data, secret):
+def jwt_encode(data):
     """takes data and secret and returns the token"""
-    return jwt.encode(payload=data, key=secret)
+    return jwt.encode(payload=data, key=SECRET_KEY)
 
 
 def jwt_decode(token, key):
@@ -23,11 +25,11 @@ def jwt_decode(token, key):
     return None
 
 
-def check_token(request):
+def user_id_from_request(request):
     token = request.headers.get("token")
     if token is None:
         return False
-    return jwt_decode(token, SECRET_KEY) is not None
+    return jwt_decode(token, SECRET_KEY).get("user_id")
 
 
 def check_token_admin(request):
@@ -38,3 +40,22 @@ def check_token_admin(request):
     if result is None:
         return False
     return result.get("is_admin")
+
+
+def check_token_admin_deco(func):
+    """
+    Decorated function must accept exactly two args:
+    - request: Request
+    - body: dict
+    """
+    def wrapper(request: Request, body: dict = None):
+        token = request.headers.get("token")
+        if token is None:
+            raise HTTPException(status_code=401)
+        result = jwt_decode(token, SECRET_KEY)
+        if result is None:
+            raise HTTPException(status_code=401)
+
+        if result.get("is_admin"):
+            return func(request, body)
+    return wrapper
