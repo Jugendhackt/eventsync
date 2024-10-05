@@ -1,7 +1,6 @@
 import csv
 import requests
 import os.path
-import json
 
 rows = []
 
