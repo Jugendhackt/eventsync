@@ -64,6 +64,13 @@ def create_event(event: Event):
     return {"success": True}
 
 
+@app.post("/event/like")
+def like_event(request: Request, body: dict):
+    user_id, event_id = body["user_id"], body["event_id"]
+    with SQLiteHandler() as cur:
+        cur.execute("INSERT INTO likes (user_id, event_id) VALUES (?, ?)", (user_id, event_id))
+
+
 @app.get("/admin")
 def get_events_admin(request: Request, search_filter):
     if not check_token_admin(request):

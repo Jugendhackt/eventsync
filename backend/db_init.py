@@ -30,6 +30,12 @@ def main():
                     display_name        TEXT NOT NULL,
                     is_admin            INT  NOT NULL DEFAULT 0,
                     hashed_password     TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS likes (
+                    user_id     TEXT NOT NULL,
+                    event_id    TEXT NOT NULL,
+                    FOREIGN KEY (event_id) REFERENCES events(event_id)
+                    FOREIGN KEY (user_id) REFERENCES events(event_id)
                 )
                 """)
 
