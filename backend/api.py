@@ -1,13 +1,13 @@
 from uuid import uuid4
 from json import loads as json_loads
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run as uvicorn_run
 
 from sqlite_handler import SQLiteHandler
 from event import Event
 
-from jwt_coder import JWT_encode, JWT_decode
+from jwt_coder import jwt_encode, jwt_decode
 #JWT_encode takes data and secret and returns the token
 #JWT_decode takes token and returns decoded data
 app = FastAPI()
@@ -18,6 +18,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
+
+def check_cookie(request):
+    cookie = request.cookies.get("key")
+    print(cookie)
+    if cookie == None:
+        cookie = "Cookie"
+    decoded = jwt_decode(cookie, "key")
+    if decoded == {"hallo": "hi"}:
+        return True
+    else:
+        return False
 
 
 @app.get("/events")
@@ -50,35 +62,46 @@ def create_event(event: Event):
     
 
 @app.get("/admin")
-def get_events_admin(search_filter):
-    search_filter = json_loads(search_filter)
-    command = "SELECT * FROM events WHERE verified=0"
-    for key, item in enumerate(search_filter):
-        command += f" WHERE {key} = '{item}'"
+def get_events_admin(request: Request, search_filter):
+    if check_cookie(request) is True:
+        search_filter = json_loads(search_filter)
+        command = "SELECT * FROM events WHERE verified=0"
+        for key, item in enumerate(search_filter):
+            command += f" WHERE {key} = '{item}'"
 
-    with SQLiteHandler() as cur:
-        cur.execute(command)
-        return cur.fetchall()
+        with SQLiteHandler() as cur:
+            cur.execute(command)
+            return cur.fetchall()
 
 
 @app.post("/admin")
-def verify_event(event_id: str):
-    with SQLiteHandler() as cur:
-        cur.execute("UPDATE events SET verified=1 WHERE event_id=?", (event_id,))
+def verify_event(request: Request, event_id: str):
+    if check_cookie(request) is True:
+        with SQLiteHandler() as cur:
+            cur.execute("UPDATE events SET verified=1 WHERE event_id=?", (event_id,))
+            return {"message": "toll du bist drinnen bro"}
+    else:
+        return {"message": "sry Bro"}
 
 
 @app.delete("/admin")
-def delete_event(event_id: str):
-    with SQLiteHandler() as cur:
-        cur.execute("DELETE FROM events WHERE event_id=?", (event_id, ))
-    return "success"
+def delete_event(request: Request, event_id: str):
+    if check_cookie(request) is True:
+        with SQLiteHandler() as cur:
+            cur.execute("DELETE FROM events WHERE event_id=?", (event_id, ))
+        return {"message": "toll du bist drinnen bro"}
+    else:
+        return {"message": "sry Bro"}
 
 
 @app.post("/login")
 def login(pw: str, response: Response):
-    jwt_token = JWT_encode({}, "key")
-    response.set_cookie(key="key", value=jwt_token)
-    return {"message": "cookie übergeben :)"}
+    if pw == "1234":
+        jwt_token = jwt_encode({"hallo": "hi"}, "key")
+        response.set_cookie(key="key", value=jwt_token)
+        return {"message": "cookie übergeben :)"}
+    else:
+        return {"error": "Passwort falsch"}
 
 
 
