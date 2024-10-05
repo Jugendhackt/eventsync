@@ -56,3 +56,19 @@ def get_events_admin(search_filter):
     with SQLiteHandler() as cur:
         cur.execute(command)
         return cur.fetchall()
+    
+
+@app.post("/admin")
+def verify_events(id: str):
+    command = "UPDATE verified FROM events WHERE id=?", (id,)
+
+    with SQLiteHandler() as cur:
+        cur.execute(command)
+
+@app.delete("/admin")
+def delete_events(id: str)
+    command = "DELETE * FROM events WHERE id=?", (id,)
+
+    with SQLiteHandler() as cur:
+        cur.execute(command)
+        
