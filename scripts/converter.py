@@ -1,11 +1,15 @@
 import csv
 import requests
 import os.path
+import sys
 
 rows = []
 
 url = input("Input url to send requests to (leave empty for default): ")
-url = url if url else "http://10.42.14.240:8000/events" # overwrite input if empty
+if not url:
+    print("YOU NEED TO PROVIDE A URL.")
+    print("dumbass")
+    sys.exit(69)
 
 filename = input("Input file name (leave empty for datatemp.csv): ")
 filename = filename if filename else "datatemp.csv" # overwrite input if empty
