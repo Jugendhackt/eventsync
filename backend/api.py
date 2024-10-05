@@ -6,7 +6,7 @@ from uvicorn import run as uvicorn_run
 
 from sqlite_handler import SQLiteHandler
 from event import Event
-from jwt_coder import jwt_encode, check_token, check_token_admin, check_token_admin_deco
+from jwt_coder import jwt_encode, user_id_from_request, check_token_admin, check_token_admin_deco
 from hashing import to_hash
 
 
@@ -66,9 +66,11 @@ def create_event(event: Event):
 
 @app.post("/event/like")
 def like_event(request: Request, body: dict):
-    user_id, event_id = body["user_id"], body["event_id"]
+    event_id, like, user_id = body["event_id"], body["like"], user_id_from_request(request)
     with SQLiteHandler() as cur:
-        cur.execute("INSERT INTO likes (user_id, event_id) VALUES (?, ?)", (user_id, event_id))
+        cur.execute("DELETE FROM likes WHERE event_id = ? AND user_id = ?", (event_id, user_id))
+        if like:
+            cur.execute("INSERT INTO likes (user_id, event_id) VALUES (?, ?)", (user_id, event_id))
 
 
 @app.get("/admin")
@@ -150,10 +152,14 @@ def login(login_data: dict):
         if cur.fetchone()["hashed_password"] != hashed_password:
             raise HTTPException(status_code=401, detail="Incorrect username or password")
 
-        cur.execute("SELECT is_admin, username, display_name FROM users WHERE username=?", (username, ))
+        cur.execute("SELECT is_admin, username, display_name, user_id FROM users WHERE username=?", (username, ))
         user = cur.fetchone()
 
-        jwt_token = jwt_encode({"is_admin": bool(user["is_admin"])})
+        jwt_token = jwt_encode({
+            "is_admin": bool(user["is_admin"]),
+            "user_id": user["user_id"],
+            "username": user["username"]
+        })
 
         return {
             "success": True,
@@ -176,12 +182,17 @@ def create_user(user_data: dict):
             raise HTTPException(status_code=409, detail="Chosen username is already in use")
 
         hashed_password = to_hash(password, salt=username)
+        user_id = uuid4().hex
         cur.execute(
             "INSERT INTO users (user_id, username, hashed_password, is_admin, display_name) VALUES (?, ?, ?, ?, ?)",
-            (uuid4().hex, username, hashed_password, 0, display_name)
+            (user_id, username, hashed_password, 0, display_name)
         )
 
-    jwt_token = jwt_encode({"is_admin": False})
+    jwt_token = jwt_encode({
+        "is_admin": False,
+        "user_id": user_id,
+        "username": username
+    })
 
     return {
             "success": True,
@@ -190,6 +201,14 @@ def create_user(user_data: dict):
             "username": username,
             "display_name": display_name
         }
+
+
+@app.get("/user/likes")
+def get_likes(request: Request):
+    user_id = user_id_from_request(request)
+    with SQLiteHandler() as cur:
+        cur.execute("SELECT * FROM likes WHERE user_id=?", (user_id, ))
+        return list(map(lambda x: x["event_id"], cur.fetchall()))
 
 
 if __name__ == "__main__":

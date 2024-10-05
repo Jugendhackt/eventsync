@@ -25,11 +25,11 @@ def jwt_decode(token, key):
     return None
 
 
-def check_token(request):
+def user_id_from_request(request):
     token = request.headers.get("token")
     if token is None:
         return False
-    return jwt_decode(token, SECRET_KEY) is not None
+    return jwt_decode(token, SECRET_KEY).get("user_id")
 
 
 def check_token_admin(request):
