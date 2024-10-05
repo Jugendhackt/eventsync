@@ -14,7 +14,6 @@ def main():
                     deleteAfter INT  NOT NULL,
                     time        TEXT NOT NULL,
                     website     TEXT NOT NULL,
-                    tags        TEXT NOT NULL,
                     description TEXT NOT NULL,
                     createTime  TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     event_id          TEXT NOT NULL PRIMARY KEY,
