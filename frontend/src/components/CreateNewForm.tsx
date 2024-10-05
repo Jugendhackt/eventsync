@@ -77,7 +77,7 @@ export function CreateNewForm(props: {reloadCallback: () => void}) {
             api.create({
                 ...values,
                 createTime: new Date().toISOString(),
-                id: uuidv4(),
+                event_id: uuidv4(),
                 hrtime: values.hrtime || null,
                 time: values.time?.toISOString() || null,
                 verified: false
@@ -88,7 +88,7 @@ export function CreateNewForm(props: {reloadCallback: () => void}) {
             addEventToDrizzle({
                 ...values,
                 createTime: new Date().toISOString(),
-                id: uuidv4(),
+                event_id: uuidv4(),
                 hrtime: values.hrtime || null,
                 time: values.time?.toISOString() || null,
                 verified: false

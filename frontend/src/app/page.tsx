@@ -23,6 +23,9 @@ import { LOAD_DATA_FROM_API } from '@/dataSource';
 import { EventList } from '@/components/EventsList';
 import { MapMarker } from '@/components/MapMarker';
 import { AD } from '@/components/ad';
+import { CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Login } from '@/components/Login';
 
 export default function Home() {
 
@@ -47,7 +50,6 @@ export default function Home() {
     if(LOAD_DATA_FROM_API) {
       api.read().then((data) => {
         console.log(data);
-
          setData(data);
          setLoading(false);
          setError(null);
@@ -78,7 +80,7 @@ export default function Home() {
             <div>Über {data.length}+ Events verfügbar</div>
         }
 
-        <div>
+        <div className="flex flex-row gap-4">
           <Dialog open={openNewDialog} onOpenChange={setOpenNewDialog}>
             <DialogTrigger><Button onClick={()=>setOpenNewDialog(true)} variant="outline">Neuer Eintrag</Button></DialogTrigger>
             <DialogContent className='h-2/3 overflow-scroll'>
@@ -91,6 +93,8 @@ export default function Home() {
               
             </DialogContent>
           </Dialog>
+
+          <Login />
 
 
         </div>
@@ -115,11 +119,11 @@ export default function Home() {
           <Map position={[52.52476, 13.4041008]} zoom={13}>
             {
               data.map((event) => (
-                <MapMarker key={event.id} event={event} />
-
+                <MapMarker key={event.event_id} event={event} />
               ))
             }
           </Map>
+         
         </div>
 
       </div>

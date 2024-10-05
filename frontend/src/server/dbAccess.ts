@@ -25,11 +25,11 @@ export async function getAdminEvents():Promise<InferSelectModel<typeof events>[]
 //TODO check permissions
 export async function verifyEvent(event:InferSelectModel<typeof events>):Promise<void> {
     "use server"
-    await db.update(events).set({verified: true}).where(eq(events.id, event.id));
+    await db.update(events).set({verified: true}).where(eq(events.event_id, event.event_id));
 }
 
 //TODO check permissions
 export async function deleteEvent(event:InferSelectModel<typeof events>):Promise<void> {
     "use server"
-    await db.delete(events).where(eq(events.id, event.id));
+    await db.delete(events).where(eq(events.event_id, event.event_id));
 }

@@ -31,6 +31,7 @@ export const ManageList = (props: {loadData: ()=>Promise<MapEvent[]>, verifyable
     useEffect(() => {
         props.loadData().then((data) => {
             setEvents(data);
+
             setLoading(false);
             setError(null);
         }).catch((error) => {
@@ -63,8 +64,8 @@ return(
         }
 
         {
-            !loading && !error && events.map((event) => <EventEntry verifyable={props.verifyable} key={event.id} event={event} onProcessed={()=>{
-                setEvents(events.filter(e=>e.id!==event.id));
+            !loading && !error && events.map((event) => <EventEntry verifyable={props.verifyable} key={event.event_id} event={event} onProcessed={()=>{
+                setEvents(events.filter(e=>e.event_id!==event.event_id));
             }} />)
         }
 
@@ -82,7 +83,7 @@ const EventEntry = (props: { event: MapEvent,verifyable: boolean, onProcessed: (
         if(!LOAD_DATA_FROM_API) {
             verifyEvent(props.event);
         }else{
-            api.verify_event(props.event.id);
+            api.verify_event(props.event.event_id);
 
         }
         props.onProcessed();
@@ -92,7 +93,7 @@ const EventEntry = (props: { event: MapEvent,verifyable: boolean, onProcessed: (
         if(!LOAD_DATA_FROM_API) {
             deleteEvent(props.event);
         }else{
-            api.delete_event(props.event.id);
+            api.delete_event(props.event.event_id);
         }
         props.onProcessed();
     }
