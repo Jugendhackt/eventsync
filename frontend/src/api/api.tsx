@@ -1,6 +1,7 @@
-import { MapEvent } from "@/server/schema";
+import { MapEvent, User } from "@/server/schema";
 
-const ip = "10.42.2.88";
+//const ip = "10.42.2.88";
+const ip = "172.20.10.2";
 export const api = {
     read: async () => {
         const response = await fetch("http://" + ip + ":8000/events?search_filter={}")
@@ -94,6 +95,35 @@ export const api = {
             throw new Error();
         }
         return await response.json();
-    }
+    },
+
+    listUsers: async ():Promise<User[]> => {
+        const response = await fetch("http://" + ip + ":8000/admin/users", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': localStorage.getItem('token') || ''
+            }
+        })
+        if (Math.floor(response.status / 100) !== 2) {
+            throw new Error();
+        }
+        return await response.json() satisfies User[];
+    },
+
+    changeAdmin: async (user_id: string, is_admin: boolean) => {
+        const response = await fetch("http://" + ip + ":8000/admin/op", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': localStorage.getItem('token') || ''
+            },
+            body: JSON.stringify({ is_admin, user_id })
+        })
+        if (Math.floor(response.status / 100) !== 2) {
+            throw new Error();
+        }
+        return await response.json();
+    },
 
 }

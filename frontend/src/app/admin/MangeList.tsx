@@ -109,8 +109,9 @@ const EventEntry = (props: { event: MapEvent,verifyable: boolean, onProcessed: (
                         <TagsViewer tags={props.event.tags.split(',')} removeTag={null} />
 
                     </div>
-                    <div className="w-2/3">
+                    <div className="w-2/3 flex flex-col gap-2">
                         {props.event.description}
+                        <div>Website: {props.event.website}</div>
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">

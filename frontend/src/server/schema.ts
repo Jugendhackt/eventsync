@@ -20,4 +20,13 @@ export const events = sqliteTable('events', {
 
   });
 
+  export const users = sqliteTable("users", {
+    user_id: text("user_id").primaryKey().unique(),
+    username: text("username").notNull(),
+    hashed_password: text("hashed_password").notNull(),
+    display_name: text("display_name").notNull(),
+    is_admin: integer("is_admin", { mode: "boolean" }),
+  });
+
   export type MapEvent = InferSelectModel<typeof events>;
+  export type User = InferSelectModel<typeof users>;
