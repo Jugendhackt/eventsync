@@ -1,6 +1,6 @@
 from uuid import uuid4
 from json import loads as json_loads
-from fastapi import FastAPI, Response, Request
+from fastapi import FastAPI, Response, Request, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run as uvicorn_run
 
@@ -19,12 +19,15 @@ app.add_middleware(
 )
 
 
-def check_cookie(request):
-    cookie = request.cookies.get("key")
-    print(cookie)
-    if cookie is None:
-        cookie = "Cookie"
-    return jwt_decode(cookie, "key") == {"hallo": "hi"}
+with open("secret_key", "rt", encoding="utf-8") as f:
+    SECRET_KEY = f.read()
+
+
+def check_token(request):
+    token = request.headers.get("token")
+    if token is None:
+        return False
+    return jwt_decode(token, SECRET_KEY)
 
 
 @app.get("/events")
@@ -73,7 +76,7 @@ def create_event(event: Event):
 
 @app.get("/admin")
 def get_events_admin(request: Request, search_filter):
-    if check_cookie(request):
+    if check_token(request):
         search_filter = json_loads(search_filter)
         command = "SELECT * FROM events WHERE verified=0"
         for key, item in enumerate(search_filter):
@@ -85,32 +88,32 @@ def get_events_admin(request: Request, search_filter):
             cur.execute(command)
             events = list(map(dict, cur.fetchall()))
 
-        for event in events:
-            cur.execute(
-                "SELECT tag FROM event_tags WHERE event_id = ?",
-                (event["event_id"], )
-            )
-            event["tags"] = ",".join(list(map(lambda x: x["tag"], cur.fetchall())))
-        return events
-    return {"success": False}
+            for event in events:
+                cur.execute(
+                    "SELECT tag FROM event_tags WHERE event_id = ?",
+                    (event["event_id"], )
+                )
+                event["tags"] = ",".join(list(map(lambda x: x["tag"], cur.fetchall())))
+        return {"success": True, "data": events}
+    raise HTTPException(status_code=401)
 
 
 @app.post("/admin")
 def verify_event(request: Request, event_id: str):
-    if check_cookie(request) is True:
+    if check_token(request):
         with SQLiteHandler() as cur:
             cur.execute("UPDATE events SET verified=1 WHERE event_id=?", (event_id,))
             return {"success": True}
-    return {"success": False}
+    raise HTTPException(status_code=401)
 
 
 @app.delete("/admin")
 def delete_event(request: Request, event_id: str):
-    if check_cookie(request) is True:
+    if check_token(request):
         with SQLiteHandler() as cur:
             cur.execute("DELETE FROM events WHERE event_id=?", (event_id, ))
         return {"success": True}
-    return {"success": False}
+    raise HTTPException(status_code=401)
 
 
 @app.post("/login")
@@ -118,10 +121,10 @@ def login(login_data: dict, response: Response):
     password, username = login_data["password"], login_data["username"]
 
     if password == "1234" and username == "admin":
-        jwt_token = jwt_encode({"hallo": "hi"}, "key")
-        response.set_cookie(key="key", value=jwt_token)
-        return {"success": True}
-    return {"success": False, "message": "password incorrect"}
+        jwt_token = jwt_encode({"hallo": "hi"}, SECRET_KEY)
+        response.set_cookie(key=SECRET_KEY, value=jwt_token, samesite="none")
+        return {"success": True, "token": jwt_token}
+    raise HTTPException(status_code=401, detail="Incorrect username or password")
 
 
 if __name__ == "__main__":
