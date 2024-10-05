@@ -32,6 +32,7 @@ import { MapEvent } from "@/server/schema";
 import { addEventToDrizzle } from "@/server/dbAccess";
 import { v4 as uuidv4 } from 'uuid';
 import { LOAD_DATA_FROM_API } from "@/dataSource";
+import { api } from "@/api/api";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -73,7 +74,15 @@ export function CreateNewForm(props: {reloadCallback: () => void}) {
         // ✅ This will be type-safe and validated.
 
         if(LOAD_DATA_FROM_API) {
-            //TODO: Implement API call
+            api.create({
+                ...values,
+                createTime: new Date().toISOString(),
+                id: uuidv4(),
+                hrtime: values.hrtime || null,
+                time: values.time?.toISOString() || null
+            }).then(() => {
+                console.log("API call success");
+            });
         }else{
             addEventToDrizzle({
                 ...values,

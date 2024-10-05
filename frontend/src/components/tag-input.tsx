@@ -26,7 +26,7 @@ export function TagInput({ onTagsChange }: TagInputProps) {
 
   const addTag = () => {
     const trimmedInput = inputValue.trim()
-    if (trimmedInput && !tags.includes(trimmedInput) && tags.length < 5) {
+    if (trimmedInput && !tags.includes(trimmedInput) && tags.length < 5 && trimmedInput.length < 20) {
       const newTags = [...tags, trimmedInput]
       setTags(newTags)
       setInputValue('')

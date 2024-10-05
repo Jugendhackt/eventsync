@@ -21,6 +21,7 @@ import { loadDataFromDrizzle } from '@/server/dbAccess';
 import { MapEvent } from '@/server/schema';
 import { LOAD_DATA_FROM_API } from '@/dataSource';
 import { EventList } from '@/components/EventsList';
+import { MapMarker } from '@/components/MapMarker';
 
 export default function Home() {
 
@@ -44,6 +45,7 @@ export default function Home() {
   function loadData() {
     if(LOAD_DATA_FROM_API) {
       api.read().then((data) => {
+        console.log(data);
 
          setData(data);
          setLoading(false);
@@ -72,7 +74,7 @@ export default function Home() {
 
         {
           loading ? <p>Loading...</p> : error ? <p>Ein Fehler ist aufgetreten</p> : 
-            <div>Über {data.length} Events verfügbar</div>
+            <div>Über {data.length}+ Events verfügbar</div>
         }
 
         <div>
@@ -111,15 +113,7 @@ export default function Home() {
           <Map position={[52.52476, 13.4041008]} zoom={13}>
             {
               data.map((event) => (
-                <Marker key={event.id} position={[event.lat, event.lon]}>
-                  <Popup>
-                    <div  className="w-full flex flex-col pl-10 pr-10 ">
-                      <p className="text-xl font-bold">{event.name}</p>
-                      <p>{event.location}</p>
-                      <p>{event.hrtime}</p>
-                    </div>
-                  </Popup>
-                </Marker>
+                <MapMarker key={event.id} event={event} />
 
               ))
             }

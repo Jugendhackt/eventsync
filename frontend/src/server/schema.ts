@@ -1,11 +1,11 @@
 import { sql } from "drizzle-orm";
-import { text, integer, sqliteTable } from "drizzle-orm/sqlite-core";
+import { text, integer, sqliteTable, real } from "drizzle-orm/sqlite-core";
 import { InferSelectModel } from "drizzle-orm/table";
 
 export const events = sqliteTable('events', {
     id: text('id').primaryKey().unique(),
-    lat: integer('lat').notNull(),
-    lon: integer('lon').notNull(),
+    lat: real('lat').notNull(),
+    lon: real('lon').notNull(),
     name: text('name').notNull(),
     author: text('author').notNull(),
     location: text('location').notNull(),
