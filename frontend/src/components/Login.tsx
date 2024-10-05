@@ -11,44 +11,57 @@ import { useAccount } from "@/zustand/userAccount"
 export const Login = () => {
 
     const [localUsername, setLocalUsername] = useState("")
+    const [display_name, setDisplay_name] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
-    const {username, setUsername, setIsAdmin} = useAccount();
+    const { setUsername, setIsAdmin } = useAccount();
+    const [register, setRegister] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        // Here you would typically handle the login logic
-        // For this example, we'll just show an error if the fields are empty
-        if (!localUsername || !password) {
-            setError("Please fill in all fields")
+
+        if (register) {
+            api.register(localUsername.toLocaleLowerCase(), password, display_name).then((data) => {
+                console.log(data);
+                if (data.success) {
+                    window.localStorage.setItem("token", data.token);
+                    console.log("Register successful");
+                    const usernameCapitalized = data.display_name.charAt(0).toUpperCase() + data.display_name.slice(1);
+                    setUsername(usernameCapitalized);
+                    setIsAdmin(data.is_admin);
+                }
+            }).catch((error) => {
+                setError("Fehler bei der Registrierung/Username bereits vergeben");
+            });
         } else {
             api.login(localUsername.toLocaleLowerCase(), password).then((data) => {
                 console.log(data);
-                if(data.success){
+                if (data.success) {
                     window.localStorage.setItem("token", data.token);
                     console.log("Login successful");
                     const usernameCapitalized = data.display_name.charAt(0).toUpperCase() + data.display_name.slice(1);
                     setUsername(usernameCapitalized);
                     setIsAdmin(data.is_admin);
-                    
-                    
-                }else{
+                } else {
                     setError("Falsche Anmeldedaten");
                 }
             }).catch((error) => {
                 setError("Fehler bei der Anmeldung");
             });
             setError("")
-            console.log("Login attempted with:", { localUsername, password })
         }
+
+
+
     }
     return (<Dialog>
+
         <DialogTrigger>Login</DialogTrigger>
         <DialogContent >
             <DialogHeader>
-                <DialogTitle>Login</DialogTitle>
+                <DialogTitle>{register ? "Registrieren" : "Login"}</DialogTitle>
                 <DialogDescription>
-                    <p>Bitte loggen Sie sich ein</p>
+                    <p>{register ? "Bitte registriere dich" : "Bitte logge dich ein"}</p>
                 </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit}>
@@ -58,12 +71,26 @@ export const Login = () => {
                         <Input
                             id="username"
                             type="text"
-                            placeholder="Max Mustermann"
+                            placeholder="maxi"
                             value={localUsername}
                             onChange={(e) => setLocalUsername(e.target.value)}
                             required
                         />
                     </div>
+                    {
+                        register &&
+                        <div className="space-y-2">
+                            <Label htmlFor="username">Anzeigename</Label>
+                            <Input
+                                id="display_name"
+                                type="text"
+                                placeholder="Max Mustermann"
+                                value={display_name}
+                                onChange={(e) => setDisplay_name(e.target.value)}
+                                required
+                            />
+                        </div>
+                    }
                     <div className="space-y-2">
                         <Label htmlFor="password">Password</Label>
                         <Input
@@ -80,10 +107,14 @@ export const Login = () => {
                         </Alert>
                     )}
                 </CardContent>
-                <CardFooter>
-                    <Button type="submit" className="w-full">Log in</Button>
+                <CardFooter className="">
+                    <Button type="submit" className="w-full">{register ? "Registrieren" : "Login"}</Button>
                 </CardFooter>
             </form>
+            <div className="w-full flex justify-center items-center">
+                <div className="cursor-pointer" onClick={() => setRegister(!register)}>{register ? "Login" : "Registrieren"}</div>
+            </div>
+
 
         </DialogContent>
     </Dialog>)

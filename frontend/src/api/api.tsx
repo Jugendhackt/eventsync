@@ -79,6 +79,21 @@ export const api = {
             throw new Error();
         }
         return await response.json();
+    },
+
+    register: async (username: string, password: string, display_name: string) => {
+        const response = await fetch("http://" + ip + ":8000/register", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password, display_name })
+        });
+
+        if (Math.floor(response.status / 100) !== 2) {
+            throw new Error();
+        }
+        return await response.json();
     }
 
 }
