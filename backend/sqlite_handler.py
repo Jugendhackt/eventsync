@@ -1,16 +1,20 @@
-from sqlite3 import connect
+from sqlite3 import connect, Row
+from yaml import load as yaml_load, SafeLoader
 
 
-db_path = 'db/contentdb.db'
+with open("config.yaml", "rt", encoding="utf-8") as f:
+    config = yaml_load(f, Loader=SafeLoader)
+
+DB_PATH = config["database_path"]
 
 
 class SQLiteHandler:
-    def __init__(self, file=db_path):
+    def __init__(self, file=DB_PATH):
         self.file = file
 
     def __enter__(self):
         self.conn = connect(self.file)
-        # self.conn.row_factory = sqlite3.Row
+        self.conn.row_factory = Row
         return self.conn.cursor()
 
     def __exit__(self, err_type, value, traceback):

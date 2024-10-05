@@ -41,7 +41,8 @@ next-env.d.ts
 # python
 **/__pycache__
 
-
+# don't forget to set this
+/backend/SUPER-SECRET-PASSWORD
 
 ### DO NOT PUSH THE DAMN DATABASE
 /backend/db

@@ -1,0 +1,5 @@
+# config file
+
+config_version: 1.0
+
+database_path: "db/contentdb.db"

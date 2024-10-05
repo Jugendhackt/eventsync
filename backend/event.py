@@ -1,4 +1,7 @@
-class Event:
+from pydantic import BaseModel
+
+
+class Event(BaseModel):
     lat: float
     lon: float
     name: str
@@ -10,4 +13,3 @@ class Event:
     website:  str
     tags: str
     description: str
-    id: str
