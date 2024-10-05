@@ -1,9 +1,9 @@
 from sqlite3 import connect
-from yaml import load as yaml_load, Safeloader
+from yaml import load as yaml_load, SafeLoader
 
 
 with open("config.yaml", "rt", encoding="utf-8") as f:
-    config = yaml_load(f, Loader=Safeloader)
+    config = yaml_load(f, Loader=SafeLoader)
 
 DB_PATH = config["database_path"]
 
