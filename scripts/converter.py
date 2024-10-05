@@ -4,6 +4,9 @@ import os.path
 
 rows = []
 
+url = input("Input url to send requests to (leave empty for default): ")
+url = url if url else "http://10.42.14.240:8000/events" # overwrite input if empty
+
 filename = input("Input file name (leave empty for datatemp.csv): ")
 filename = filename if filename else "datatemp.csv" # overwrite input if empty
 if not os.path.isfile(filename):
@@ -24,6 +27,6 @@ for row in rows:
     data["time"] = ""
     headers = {'content-type': 'application/json'}
     print(headers, data)
-    response = requests.post("http://10.42.14.240:8000/events", json=data, headers=headers)
+    response = requests.post(url, json=data, headers=headers)
     print(response.status_code, response.reason)
     print(response.content)
