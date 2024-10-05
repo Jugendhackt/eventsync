@@ -34,20 +34,25 @@ def get_events(search_filter):
 
 @app.post("/events")
 def create_event(event: Event):
-    print("event")
+    event_id = uuid4().hex
     with SQLiteHandler() as cur:
         cur.execute(
             """
             INSERT INTO events 
             (lat, lon, name, author, location, hrtime, deleteAfter, time, 
-            website, tags, description, event_id, verified) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            website, description, event_id, verified) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             """,
-            (event.lat, event.lon, event.name, event.author, event.location,
-             event.hrtime, event.deleteAfter, event.time, event.website,
-             event.tags, event.description, uuid4().hex, 0))
-        return [{"message": "Event erfolgreich erstellt"}]
-    
+            (event.lat, event.lon, event.name, event.author, event.location, event.hrtime,
+             event.deleteAfter, event.time, event.website, event.description, event_id, 0))
+
+        for tag in event.tags.split(","):
+            cur.execute(
+                "INSERT INTO event_tags (event_id, tag) VALUES (?, ?);",
+                (event_id, tag)
+            )
+    return "success"
+
 
 @app.get("/admin")
 def get_events_admin(search_filter):
