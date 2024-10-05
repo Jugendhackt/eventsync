@@ -121,12 +121,15 @@ def delete_event(request: Request, event_id: str):
 def login(login_data: dict, response: Response):
     password, username = login_data["password"], login_data["username"]
 
-    if password != "1234" or username != "admin":
-        raise HTTPException(status_code=401, detail="Incorrect username or password")
-
-    jwt_token = jwt_encode({"hallo": "hi"}, SECRET_KEY)
+    hashed_password = to_hash(password, salt=username)
 
     with SQLiteHandler() as cur:
+        cur.execute("SELECT hashed_password FROM users WHERE username=?", (username,))
+        if cur.fetchone()["hashed_password"] != hashed_password:
+            raise HTTPException(status_code=401, detail="Incorrect username or password")
+
+        jwt_token = jwt_encode({"hallo": "hi"}, SECRET_KEY)
+
         cur.execute("SELECT is_admin, username, display_name FROM users WHERE username=?", (username, ))
         user = cur.fetchone()
         return {
