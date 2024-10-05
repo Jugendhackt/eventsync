@@ -2,7 +2,7 @@
 import { Marker, Popup } from 'react-leaflet';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
-import { SlidersHorizontal } from 'lucide-react';
+import { Heart, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -28,6 +28,8 @@ import { Input } from '@/components/ui/input';
 import { Login } from '@/components/Login';
 import { SearchBar } from '@/components/search-bar';
 import { LoginIndicator } from '@/components/LoginIndicator';
+import { useAccount } from '@/zustand/userAccount';
+import { Toggle } from '@/components/ui/toggle';
 
 
 export default function Home() {
@@ -46,12 +48,25 @@ export default function Home() {
   const [error, setError] = useState<Error | null>(null);
   const [openNewDialog, setOpenNewDialog] = useState(false);
 
+  const {username} = useAccount();
+  const [likes, setLikes] = useState<string[]>([]);
+  const [sortLiked, setSortLiked] = useState(false);
+
   useEffect(() => {
     loadData();
   }, []);
 
   function loadData() {
     if(LOAD_DATA_FROM_API) {
+      if(username) {
+        api.getLikedEvents().then((data) => {
+          setLikes(data);
+        }).catch((error) => {
+          console.error(error);
+        });
+      }
+
+
       api.read().then((data) => {
         console.log(data);
          setData(data);
@@ -111,10 +126,9 @@ export default function Home() {
         <div className='w-1/3 max-w-100 md:flex hidden flex-col'>
           <div className="w-full h-20 flex flex-row pl-4 pr-4 justify-between items-center gap-4">
             <SearchBar data={data} setFilteredData={setFilteredData}/>
-            <Button className="flex flex-row gap-3 items-center"> <SlidersHorizontal /></Button>
           </div>
           <Separator />
-          <EventList data={filteredData} />
+          <EventList data={filteredData} likes={likes} />
           <AD />
         </div>
         <div className=" w-full">

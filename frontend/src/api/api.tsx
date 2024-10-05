@@ -54,12 +54,13 @@ export const api = {
     },
 
     verify_event: async (id: string) => {
-        const response = await fetch("http://" + ip + ":8000/admin?event_id=" + id, {
+        const response = await fetch("http://" + ip + ":8000/admin", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'token': localStorage.getItem('token') || ''
             },
+            body: JSON.stringify({ event_id: id })
         })
         if (Math.floor(response.status / 100) !== 2) {
             throw new Error();
@@ -139,6 +140,35 @@ export const api = {
             throw new Error();
         }
         return await response.json();
+    },
+
+    likeEvent: async (event_id: string, like:boolean) => {
+        const response = await fetch("http://" + ip + ":8000/event/like", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': localStorage.getItem('token') || ''
+            },
+            body: JSON.stringify({ event_id, like })
+        })
+        if (Math.floor(response.status / 100) !== 2) {
+            throw new Error();
+        }
+        return await response.json();
+    },
+
+    getLikedEvents: async () => {
+        const response = await fetch("http://" + ip + ":8000/user/likes", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': localStorage.getItem('token') || ''
+            }
+        })
+        if (Math.floor(response.status / 100) !== 2) {
+            throw new Error();
+        }
+        return await response.json() satisfies string[];
     }
 
 }
