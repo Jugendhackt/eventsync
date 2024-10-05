@@ -1,6 +1,6 @@
 from uuid import uuid4
 from json import loads as json_loads
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run as uvicorn_run
 
@@ -72,6 +72,14 @@ def delete_event(event_id: str):
     with SQLiteHandler() as cur:
         cur.execute("DELETE FROM events WHERE event_id=?", (event_id, ))
     return "success"
+
+
+@app.post("/login")
+def login(pw: str, response: Response):
+    jwt_token = JWT_encode({}, "key")
+    response.set_cookie(key="key", value=jwt_token)
+    return {"message": "cookie übergeben :)"}
+
 
 
 if __name__ == "__main__":
