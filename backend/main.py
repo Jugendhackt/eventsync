@@ -4,10 +4,10 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run as uvicorn_run
 
-from sqlite_handler import SQLiteHandler
-from pydantic_models import Event
-from jwt_coder import jwt_encode, get_user_id, check_token_admin, check_token_admin_deco
-from hashing import to_hash
+from assets import (Event,
+                    SQLiteHandler,
+                    jwt_encode, get_user_id, check_token_admin, check_token_admin_deco,
+                    to_hash)
 
 
 app = FastAPI()
