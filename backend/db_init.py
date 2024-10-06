@@ -26,7 +26,7 @@ def main():
                 CREATE TABLE IF NOT EXISTS event_tags (
                     tag         TEXT NOT NULL,
                     event_id    TEXT,
-                    FOREIGN KEY (event_id)  REFERENCES events(id)
+                    FOREIGN KEY (event_id)  REFERENCES events(event_id)
                 );
                 CREATE TABLE IF NOT EXISTS users (
                     user_id             TEXT NOT NULL PRIMARY KEY,
