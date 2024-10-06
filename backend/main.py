@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run as uvicorn_run
 
 from sqlite_handler import SQLiteHandler
-from event import Event
+from pydantic_models import Event
 from jwt_coder import jwt_encode, get_user_id, check_token_admin, check_token_admin_deco
 from hashing import to_hash
 
