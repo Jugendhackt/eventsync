@@ -4,6 +4,7 @@
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
 [![frontend: next.js](https://img.shields.io/badge/frontend-next.js-blue)](https://nextjs.org/)
 [![backend: python](https://img.shields.io/badge/backend-python-darkgreen)](https://www.python.org/)
+[![webapi: fastapi](https://img.shields.io/badge/webapi-fastapi-turquoise)](https://fastapi.tiangolo.com/)
 
 ### Our Goals
 Our project - EventSync - provides a platform for event hosters and allows teens to find events in their area.
