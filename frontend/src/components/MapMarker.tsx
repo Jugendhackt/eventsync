@@ -3,12 +3,14 @@ import { MapEvent } from "@/server/schema";
 import { useEventSelection } from "@/zustand/eventSelection";
 import { Marker, Popup } from 'react-leaflet';
 import { blueIcon, greenIcon, redIcon } from "./Markers";
+import { useLiked } from "@/zustand/likes";
 
 
-export const MapMarker = (props: { event: MapEvent, likes: string[] }) => {
+export const MapMarker = (props: { event: MapEvent}) => {
 
 
   const { event, setEvent } = useEventSelection();
+  const {likes} = useLiked();
 
   const handleClick = () => {
     setEvent(props.event);
@@ -16,7 +18,7 @@ export const MapMarker = (props: { event: MapEvent, likes: string[] }) => {
 
 
   return (
-    <Marker icon={event === props.event ? blueIcon : (props.likes.includes(props.event.event_id??"")?redIcon:greenIcon)} key={props.event.event_id} position={[props.event.lat, props.event.lon]} eventHandlers={{
+    <Marker icon={event === props.event ? blueIcon : (likes.includes(props.event.event_id??"")?redIcon:greenIcon)} key={props.event.event_id} position={[props.event.lat, props.event.lon]} eventHandlers={{
       click: handleClick,
       popupclose: () => {
         setEvent(null);

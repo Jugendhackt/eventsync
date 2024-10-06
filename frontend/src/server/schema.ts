@@ -28,5 +28,11 @@ export const events = sqliteTable('events', {
     is_admin: integer("is_admin", { mode: "boolean" }),
   });
 
+  export const likes = sqliteTable("likes", {
+    user_id: text("user_id").notNull(),
+    event_id: text("event_id").notNull(),
+  });
+
   export type MapEvent = InferSelectModel<typeof events>;
   export type User = InferSelectModel<typeof users>;
+  export type Like = InferSelectModel<typeof likes>;

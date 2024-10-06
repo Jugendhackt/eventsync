@@ -28,12 +28,14 @@
     "@types/bcrypt": "^5.0.2",
     "@types/better-sqlite3": "^7.6.11",
     "@types/uuid": "^10.0.0",
+    "bcrypt": "^5.1.1",
     "better-sqlite3": "^11.3.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "drizzle-kit": "^0.24.2",
     "drizzle-orm": "^0.33.0",
+    "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "lucide-react": "^0.447.0",
@@ -51,6 +53,7 @@
     "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/leaflet": "^1.9.12",
     "@types/node": "^20",
     "@types/react": "^18",

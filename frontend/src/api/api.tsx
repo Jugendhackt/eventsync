@@ -1,7 +1,7 @@
 import { MapEvent, User } from "@/server/schema";
 
-//const ip = "10.42.2.88";
-const ip = "172.20.10.2";
+const ip = "10.42.2.88";
+//const ip = "10.42.14.240";
 export const api = {
     read: async () => {
         const response = await fetch("http://" + ip + ":8000/events?search_filter={}")

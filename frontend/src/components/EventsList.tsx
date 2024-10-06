@@ -14,14 +14,15 @@ import { useEventSelection } from "@/zustand/eventSelection"
 import { useEffect, useRef, useState } from "react";
 import { useAccount } from "@/zustand/userAccount";
 import { api } from "@/api/api";
+import { useLiked } from "@/zustand/likes";
 
-export const EventList = (props: { data: MapEvent[], likes: string[] | null }) => {
+export const EventList = (props: { data: MapEvent[] }) => {
 
     return (
         <div className="mt-4 h-[95%] w-full overflow-hidden">
             <p className="pl-4 text-l font-bold">Event Liste</p>
             <div className="pr-4 pl-4 flex flex-col gap-4 mt-2 h-full overflow-scroll pb-20">
-                {props.data.map((event) => <EventEntry key={event.event_id} event={event} likes={props.likes} />)}
+                {props.data.map((event) => <EventEntry key={event.event_id} event={event} />)}
                 {
                     props.data.length == 0 &&
                     <p>Keine Events vorhanden</p>
@@ -31,7 +32,7 @@ export const EventList = (props: { data: MapEvent[], likes: string[] | null }) =
     )
 }
 
-const EventEntry = (props: { event: MapEvent, likes: string[] | null }) => {
+const EventEntry = (props: { event: MapEvent }) => {
 
     const { event, setEvent } = useEventSelection();
 
@@ -43,21 +44,30 @@ const EventEntry = (props: { event: MapEvent, likes: string[] | null }) => {
 
     const { username } = useAccount();
 
-    const [liked, setLiked] = useState(props.likes?.includes(props.event.event_id) ?? false)
+    const {likes, setLikes} = useLiked();
+    const [liked, setLiked] = useState(false);
 
     useEffect(() => {
-        setLiked(props.likes?.includes(props.event.event_id) ?? false)
+        if(likes.includes(props.event.event_id)){
+            setLiked(true);
+        }else{
+            setLiked(false);
+        }
+
         if (event?.event_id == props.event.event_id && !clicked) {
             executeScroll()
         }
         setClicked(false)
-    }, [event])
+    }, [event,likes])
 
     function like(event: React.MouseEvent<SVGSVGElement, MouseEvent>) {
 
 
         api.likeEvent(props.event.event_id, !liked).then(() => {
             setLiked(!liked);
+            api.getLikedEvents().then((data) => {
+                setLikes(data);
+            });
         });
 
         event.stopPropagation();

@@ -7,7 +7,7 @@ import { Search } from "lucide-react"
 
 export function SearchBar(props: {data: null | MapEvent[], setFilteredData: (data: MapEvent[]) => void}) {
   return (
-    <div className="flex w-full max-w-sm items-center space-x-2">
+    <div className="flex w-full items-center space-x-2">
       <div className="relative flex-grow">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
         <Input

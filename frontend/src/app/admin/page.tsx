@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ManageList } from "./MangeList";
 import { api } from "@/api/api";
 import { LOAD_DATA_FROM_API } from "@/dataSource";
-import { getAdminEvents, loadDataFromDrizzle } from "@/server/dbAccess";
+import { getAdminEvents, getAdminUsers, loadDataFromDrizzle } from "@/server/dbAccess";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from "react";
 import { ManageUserList } from "./MangeUserList";
@@ -59,7 +59,7 @@ export default function Admin() {
 
         {
             tab === "users" && <>
-                <ManageUserList loadData={get_all_users} />
+                <ManageUserList loadData={LOAD_DATA_FROM_API?get_all_users:getAdminUsers} />
             </>
         }
     </div>

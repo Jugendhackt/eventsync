@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -7,6 +8,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { api } from "@/api/api"
 import { useAccount } from "@/zustand/userAccount"
+import { LOAD_DATA_FROM_API } from "@/dataSource"
+import { login, register } from "@/server/dbAccess"
 
 export const Login = () => {
 
@@ -15,42 +18,77 @@ export const Login = () => {
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
     const { setUsername, setIsAdmin } = useAccount();
-    const [register, setRegister] = useState(false);
+    const [isRegister, setIsRegister] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
 
-        if (register) {
-            api.register(localUsername.toLocaleLowerCase(), password, display_name).then((data) => {
-                console.log(data);
-                if (data.success) {
-                    window.localStorage.setItem("token", data.token);
-                    console.log("Register successful");
-                    const usernameCapitalized = data.display_name.charAt(0).toUpperCase() + data.display_name.slice(1);
-                    setUsername(usernameCapitalized);
-                    setIsAdmin(data.is_admin);
-                    window.location.reload(); //TODO fix
+        if (isRegister) {
+            if(LOAD_DATA_FROM_API) {
+                api.register(localUsername.toLocaleLowerCase(), password, display_name).then((data) => {
+                    console.log(data);
+                    if (data.success) {
+                        window.localStorage.setItem("token", data.token);
+                        console.log("Register successful");
+                        const usernameCapitalized = data.display_name.charAt(0).toUpperCase() + data.display_name.slice(1);
+                        setUsername(usernameCapitalized);
+                        setIsAdmin(data.is_admin);
+                        window.location.reload(); //TODO fix
+                    }
+                }).catch((error) => {
+                    setError("Fehler bei der Registrierung/Username bereits vergeben");
+                });
+            }else{
+                register(localUsername.toLocaleLowerCase(), password, display_name).then((data) => {
+                    console.log(data);
+                    if (data.success) {
+                        window.localStorage.setItem("token", data.token);
+                        console.log("Register successful");
+                        const usernameCapitalized = data.display_name.charAt(0).toUpperCase() + data.display_name.slice(1);
+                        setUsername(usernameCapitalized);
+                        setIsAdmin(data.is_admin);
+                        window.location.reload(); //TODO fix
+                    }
                 }
-            }).catch((error) => {
-                setError("Fehler bei der Registrierung/Username bereits vergeben");
-            });
+                ).catch((error) => {
+                    setError("Fehler bei der Registrierung/Username bereits vergeben");
+                });
+            }
         } else {
-            api.login(localUsername.toLocaleLowerCase(), password).then((data) => {
-                console.log(data);
-                if (data.success) {
-                    window.localStorage.setItem("token", data.token);
-                    console.log("Login successful");
-                    const usernameCapitalized = data.display_name.charAt(0).toUpperCase() + data.display_name.slice(1);
-                    setUsername(usernameCapitalized);
-                    setIsAdmin(data.is_admin);
-                    window.location.reload(); //TODO fix
-                } else {
-                    setError("Falsche Anmeldedaten");
-                }
-            }).catch((error) => {
-                setError("Fehler bei der Anmeldung");
-            });
-            setError("")
+            if(LOAD_DATA_FROM_API) {
+                api.login(localUsername.toLocaleLowerCase(), password).then((data) => {
+                    console.log(data);
+                    if (data.success) {
+                        window.localStorage.setItem("token", data.token);
+                        console.log("Login successful");
+                        const usernameCapitalized = data.display_name.charAt(0).toUpperCase() + data.display_name.slice(1);
+                        setUsername(usernameCapitalized);
+                        setIsAdmin(data.is_admin);
+                        window.location.reload(); //TODO fix
+                    } else {
+                        setError("Falsche Anmeldedaten");
+                    }
+                }).catch((error) => {
+                    setError("Fehler bei der Anmeldung");
+                });
+                setError("")
+            }else{
+                login(localUsername.toLocaleLowerCase(), password).then((data) => {
+                    console.log(data);
+                    if (data.success) {
+                        window.localStorage.setItem("token", data.token);
+                        console.log("Login successful");
+                        const usernameCapitalized = data.display_name.charAt(0).toUpperCase() + data.display_name.slice(1);
+                        setUsername(usernameCapitalized);
+                        setIsAdmin(data.is_admin??false);
+                        window.location.reload(); //TODO fix
+                    } else {
+                        setError("Falsche Anmeldedaten");
+                    }
+                }).catch((error) => {
+                    setError("Fehler bei der Anmeldung");
+                });
+            }
         }
 
 
@@ -61,9 +99,9 @@ export const Login = () => {
         <DialogTrigger>Login</DialogTrigger>
         <DialogContent >
             <DialogHeader>
-                <DialogTitle>{register ? "Registrieren" : "Login"}</DialogTitle>
+                <DialogTitle>{isRegister ? "Registrieren" : "Login"}</DialogTitle>
                 <DialogDescription>
-                    <p>{register ? "Bitte registriere dich" : "Bitte logge dich ein"}</p>
+                    <p>{isRegister ? "Bitte registriere dich" : "Bitte logge dich ein"}</p>
                 </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit}>
@@ -80,7 +118,7 @@ export const Login = () => {
                         />
                     </div>
                     {
-                        register &&
+                        isRegister &&
                         <div className="space-y-2">
                             <Label htmlFor="username">Anzeigename</Label>
                             <Input
@@ -110,11 +148,11 @@ export const Login = () => {
                     )}
                 </CardContent>
                 <CardFooter className="">
-                    <Button type="submit" className="w-full">{register ? "Registrieren" : "Login"}</Button>
+                    <Button type="submit" className="w-full">{isRegister ? "Registrieren" : "Login"}</Button>
                 </CardFooter>
             </form>
             <div className="w-full flex justify-center items-center">
-                <div className="cursor-pointer" onClick={() => setRegister(!register)}>{register ? "Login" : "Registrieren"}</div>
+                <div className="cursor-pointer" onClick={() => setIsRegister(!isRegister)}>{isRegister ? "Login" : "Registrieren"}</div>
             </div>
 
 

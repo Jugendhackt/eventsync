@@ -21,7 +21,7 @@ import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { TagsViewer } from "@/components/tag-input";
 import { Button } from "@/components/ui/button";
 import { LOAD_DATA_FROM_API } from "@/dataSource";
-import { deleteEvent, verifyEvent } from "@/server/dbAccess";
+import { changeAdmin, deleteEvent, deleteUser, verifyEvent } from "@/server/dbAccess";
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label";
 import { Trash2 } from "lucide-react";
@@ -85,7 +85,7 @@ export const ManageUserList = (props: { loadData: () => Promise<User[]> }) => {
                 }
 
                 {
-                    !loading && !error && users.length === 0 && <p>Keine Events vorhanden</p>
+                    !loading && !error && users.length === 0 && <p>Keine Nutzer vorhanden</p>
                 }
             </CardContent>
         </Card>);
@@ -100,8 +100,8 @@ const UserEntry = (props: { user: User, deleted: () => void }) => {
     function change_admin(setAdmin: boolean) {
         setClicked(setAdmin);
         props.user.is_admin = setAdmin;
-        if (!LOAD_DATA_FROM_API) {
-            // deleteEvent(props.event);
+        if (!LOAD_DATA_FROM_API) {        
+            changeAdmin(props.user.user_id, setAdmin);
         } else {
             api.changeAdmin(props.user.user_id, setAdmin);
         }
@@ -109,7 +109,7 @@ const UserEntry = (props: { user: User, deleted: () => void }) => {
 
     function delete_user() {
         if (!LOAD_DATA_FROM_API) {
-            // deleteEvent(props.event);
+            deleteUser(props.user.user_id);
         } else {
             api.deleteUser(props.user.user_id);
         }

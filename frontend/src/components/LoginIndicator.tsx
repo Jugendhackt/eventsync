@@ -35,8 +35,6 @@ export const LoginIndicator = () => {
 
             </DropdownMenuContent>
         </DropdownMenu>
-
-        return <Link href="/admin">{username}</Link>
     } else {
         return <Login />
     }

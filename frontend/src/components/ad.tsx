@@ -10,10 +10,10 @@ import {
 
 export const AD = () => {
 
-    return <Card>
+    return <Card className="lg:block hidden">
         <CardHeader>
             <CardTitle>Werbung</CardTitle>
-            <CardDescription>Hier könnte ihre Werbung stehen! Bei Interesse bitte an ad@jugendfinder.org wenden</CardDescription>
+            <CardDescription>Hier könnte ihre Werbung stehen!</CardDescription>
         </CardHeader>
         
     </Card>;

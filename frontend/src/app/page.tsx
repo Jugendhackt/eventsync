@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import {
   Dialog,
-
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -25,7 +24,8 @@ import { AD } from '@/components/ad';
 import { SearchBar } from '@/components/search-bar';
 import { LoginIndicator } from '@/components/LoginIndicator';
 import { useAccount } from '@/zustand/userAccount';
-import { Toggle } from '@/components/ui/toggle';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useLiked } from '@/zustand/likes';
 
 
 export default function Home() {
@@ -45,8 +45,9 @@ export default function Home() {
   const [openNewDialog, setOpenNewDialog] = useState(false);
 
   const {username} = useAccount();
-  const [likes, setLikes] = useState<string[]>([]);
+  const {likes, setLikes } = useLiked();
   const [sortLiked, setSortLiked] = useState(false);
+  const [tab, setTab] = useState('events');
 
   useEffect(() => {
     loadData();
@@ -55,13 +56,13 @@ export default function Home() {
   function loadData() {
     if(LOAD_DATA_FROM_API) {
       if(username) {
+
         api.getLikedEvents().then((data) => {
           setLikes(data);
         }).catch((error) => {
           console.error(error);
         });
       }
-
 
       api.read().then((data) => {
         console.log(data);
@@ -90,11 +91,11 @@ export default function Home() {
   return (
     <div className="w-full h-svh flex h-max-[100%] flex-col">
       <div className="w-full pt-4 pb-4 bg-slate-50 flex flex-row pl-10 pr-10 justify-between items-center">
-        <p className="text-xl font-bold">Jugendfinder</p>
+        <p className="text-xl font-bold">EventSync</p>
 
         {
           loading ? <p>Loading...</p> : error ? <p>Ein Fehler ist aufgetreten</p> : 
-            <div>Über {data.length}+ Events verfügbar</div>
+            <div className="hidden md:block">{data.length}+ Events verfügbar</div>
         }
 
         <div className="flex flex-row gap-4 items-center">
@@ -110,29 +111,36 @@ export default function Home() {
               
             </DialogContent>
           </Dialog>
-
           <LoginIndicator />
 
 
         </div>
+      </div>
+      <div className='p-4 flex-col justify-center w-full flex md:hidden items-center'>
+        <Tabs defaultValue="events" className="w-fit" onValueChange={setTab} value={tab}>
+                <TabsList>
+                    <TabsTrigger value="events">Events</TabsTrigger>
+                    <TabsTrigger value="map">Karte</TabsTrigger>
+                </TabsList>
 
+            </Tabs>
       </div>
       <div className="flex flex-row w-screen h-full overflow-hidden justify-stretch">
         
-        <div className='w-1/3 max-w-100 md:flex hidden flex-col'>
+        <div className={'w-1/3 max-w-100 md:flex flex-col '+(tab==="events"?"flex w-full md:w-1/3":"hidden")}>
           <div className="w-full h-20 flex flex-row pl-4 pr-4 justify-between items-center gap-4">
             <SearchBar data={data} setFilteredData={setFilteredData}/>
           </div>
           <Separator />
-          <EventList data={filteredData} likes={likes} />
+          <EventList data={filteredData} />
           <AD />
         </div>
-        <div className=" w-full">
+        <div className={"w-full md:block "+(tab==="map"?"block":"hidden")}>
 
           <Map position={[52.52476, 13.4041008]} zoom={13}>
             {
               filteredData.map((event) => (
-                <MapMarker key={event.event_id} event={event} likes={likes} />
+                <MapMarker key={event.event_id} event={event} />
               ))
             }
           </Map>
