@@ -1,9 +1,9 @@
-# JugendFinder
+# EventSync
 
 ## Projekt description
 
 ### Our Goals
-Our project Jugendfinder provides a platform for event hosters and allows teens to find events in their area.
+Our project EventSync provides a platform for event hosters and allows teens to find events in their area.
 
 ### Our features
 - Create events with tags
