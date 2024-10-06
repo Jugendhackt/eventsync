@@ -29,7 +29,7 @@ export default function Admin() {
     function get_all_users() {
         if (!LOAD_DATA_FROM_API) {
             //return loadDataFromDrizzle();
-            return Promise.resolve([]);
+            return getAdminUsers();
         }
         return api.listUsers();
     }

@@ -15,6 +15,8 @@ import { useEffect, useRef, useState } from "react";
 import { useAccount } from "@/zustand/userAccount";
 import { api } from "@/api/api";
 import { useLiked } from "@/zustand/likes";
+import { LOAD_DATA_FROM_API } from "@/dataSource";
+import { getLikedEvents, likeEvent } from "@/server/dbAccess";
 
 export const EventList = (props: { data: MapEvent[] }) => {
 
@@ -63,12 +65,18 @@ const EventEntry = (props: { event: MapEvent }) => {
     function like(event: React.MouseEvent<SVGSVGElement, MouseEvent>) {
 
 
-        api.likeEvent(props.event.event_id, !liked).then(() => {
-            setLiked(!liked);
-            api.getLikedEvents().then((data) => {
-                setLikes(data);
+        if(LOAD_DATA_FROM_API) {
+            api.likeEvent(props.event.event_id, !liked).then(() => {
+                setLiked(!liked);
+                api.getLikedEvents().then((data) => {
+                    setLikes(data);
+                });
             });
-        });
+        }else{
+            likeEvent(props.event.event_id, !liked).then(() => {
+                setLiked(!liked);
+            });
+        }
 
         event.stopPropagation();
 
