@@ -111,6 +111,8 @@ def delete_user(_: Request, body: dict):
     user_id = body["user_id"]
     with SQLiteHandler() as cur:
         cur.execute("DELETE FROM users WHERE user_id = ?", (user_id, ))
+        cur.execute("DELETE FROM likes WHERE user_id = ?", (user_id, ))
+
     return {"success": True, "message": f"User deleted: {user_id}"}
 
 
@@ -138,6 +140,8 @@ def delete_event(request: Request, event_id: str):
         raise HTTPException(status_code=401)
     with SQLiteHandler() as cur:
         cur.execute("DELETE FROM events WHERE event_id=?", (event_id, ))
+        cur.execute("DELETE FROM likes WHERE event_id = ?", (event_id, ))
+        cur.execute("DELETE FROM event_tags WHERE event_id = ?", (event_id, ))
     return {"success": True}
 
 
@@ -222,4 +226,21 @@ def get_likes(request: Request):
 
 
 if __name__ == "__main__":
-    uvicorn_run(app, host="0.0.0.0", port=8000)
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser(
+                prog='EventSync backend',
+                add_help=True,
+                description=None,
+                epilog=None)
+
+    parser.add_argument("-p", "--port",
+                        required=False,
+                        action="store",
+                        type=int,
+                        default=8000,
+                        help="specify port; default: 8000")
+
+    args = parser.parse_args()
+
+    uvicorn_run(app, host="0.0.0.0", port=args.port)
