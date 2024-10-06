@@ -1,10 +1,12 @@
 # EventSync
 
-[![](https://img.shields.io/badge/repository-_Github-black)](https://github.com/Jugendhackt/eventsync/)
-[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
-[![frontend: next.js](https://img.shields.io/badge/frontend-next.js-blue)](https://nextjs.org/)
+[![repository: GitHub](https://img.shields.io/badge/repository-_GitHub-black)](https://github.com/Jugendhackt/eventsync/)
+[![frontend: typescript](https://img.shields.io/badge/frontend-typescript-blue)](https://www.typescriptlang.org/)
+[![framework: next.js](https://img.shields.io/badge/framework-next.js-darkblue)](https://nextjs.org/)
 [![backend: python](https://img.shields.io/badge/backend-python-darkgreen)](https://www.python.org/)
 [![webapi: fastapi](https://img.shields.io/badge/webapi-fastapi-turquoise)](https://fastapi.tiangolo.com/)
+[![map: openstreetmap](https://img.shields.io/badge/map-openstreetmaps-green)](https://www.openstreetmap.de/)
+[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
 
 ### The idea
 Our project - EventSync - provides a platform for event hosters and allows teens to find events in their area.
@@ -41,3 +43,11 @@ Maker sure to have all the requirements installed, before running both.
   pip install -r requirements.txt
   python main.py
   ```
+
+## Contributors
+
+- Tim Arnold (Mr. Frontend)
+- Merlin Pritlove (Mr. API aka Mr. Database)
+- Konstantin Winskowski (Mr. 422)
+- Emil Engelbert (Mr. Datensatz)
+- Julian (Mr. Präsentation)
