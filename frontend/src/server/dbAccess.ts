@@ -1,8 +1,8 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "."; //drizzle
-import { events, users } from "./schema";
+import { events, likes, users } from "./schema";
 import { InferSelectModel } from "drizzle-orm/table";
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
@@ -97,4 +97,19 @@ export async function changeAdmin(user_id:string, setAdmin:boolean):Promise<void
 export async function deleteUser(user_id:string):Promise<void> {
     "use server";
     await db.delete(users).where(eq(users.user_id, user_id));
+}
+
+export async function getLikedEvents(user_id:string):Promise<string[]> {
+    "use server";
+    const data = await db.select().from(likes).where(eq(likes.user_id, user_id));
+    return data.map((like) => like.event_id);
+}
+
+export async function likeEvent(user_id:string, event_id:string, like:boolean):Promise<void> {
+    "use server";
+    if(like){
+        await db.insert(likes).values({user_id, event_id});
+    } else {
+        await db.delete(likes).where(and(eq(likes.user_id, user_id), eq(likes.event_id, event_id)));
+    }
 }
