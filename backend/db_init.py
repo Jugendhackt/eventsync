@@ -13,7 +13,7 @@ likes:
 """
 from pathlib import Path
 
-from assets import SQLiteHandler
+from sqlite_handler import SQLiteHandler
 
 
 def main():
