@@ -6,14 +6,15 @@
 [![backend: python](https://img.shields.io/badge/backend-python-darkgreen)](https://www.python.org/)
 [![webapi: fastapi](https://img.shields.io/badge/webapi-fastapi-turquoise)](https://fastapi.tiangolo.com/)
 
-### Our Goals
+### The idea
 Our project - EventSync - provides a platform for event hosters and allows teens to find events in their area.
 
-### Our features
-- Create events with tags
-- Admin panel for easy administration
-- Create your own user account
-- Search for events on the map
+### Features
+- Creation of events
+- Admin panel
+- User management system
+- Interactive map
+- Search/filter for events
 - Like your favourite events
 
 ## How to start?
