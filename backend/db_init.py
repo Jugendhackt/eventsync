@@ -12,12 +12,14 @@ likes:
 - user_id, event_id
 """
 from pathlib import Path
+from os.path import split as path_split
 
 from sqlite_handler import SQLiteHandler
+from config import config
 
 
 def main():
-    Path("./db").mkdir(parents=True, exist_ok=True)
+    Path(path_split(config["database_path"])[0]).mkdir(parents=True, exist_ok=True)
 
     with SQLiteHandler() as cur:
         cur.executescript(
