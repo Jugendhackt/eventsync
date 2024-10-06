@@ -30,6 +30,9 @@ def get_user_id(request: Request):
     token = request.headers.get("token")
     if token is None:
         return False
+    data = jwt_decode(token, SECRET_KEY)
+    if data is None:
+        return False
     return jwt_decode(token, SECRET_KEY).get("user_id")
 
 
