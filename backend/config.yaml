@@ -1,5 +1,7 @@
-# config file
-
 config_version: 1.0
 
 database_path: "db/contentdb.db"
+
+secret_via_environment_var: true
+# only needed if (secret_via_environment_var = false)
+secret_path: secret_key

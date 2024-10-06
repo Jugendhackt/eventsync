@@ -5,10 +5,7 @@ import jwt
 from jwt.exceptions import ExpiredSignatureError, DecodeError
 
 from fastapi import Request, HTTPException
-
-
-with open("../secret_key", "rt", encoding="utf-8") as f:
-    SECRET_KEY = f.read()
+from get_secret import SECRET_KEY
 
 
 def jwt_encode(data: dict):
@@ -32,6 +29,9 @@ def get_user_id(request: Request):
     """Extracts the user_id from the request"""
     token = request.headers.get("token")
     if token is None:
+        return False
+    data = jwt_decode(token, SECRET_KEY)
+    if data is None:
         return False
     return jwt_decode(token, SECRET_KEY).get("user_id")
 
