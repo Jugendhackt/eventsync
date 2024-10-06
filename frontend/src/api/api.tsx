@@ -1,6 +1,6 @@
 import { MapEvent, User } from "@/server/schema";
 
-const ip = "http://10.42.2.88:8000";
+const ip = "https://eventsync.auroraborealis.cloud";
 //const ip = "10.42.14.240";
 export const api = {
     read: async () => {
