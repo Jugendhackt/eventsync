@@ -226,4 +226,21 @@ def get_likes(request: Request):
 
 
 if __name__ == "__main__":
-    uvicorn_run(app, host="0.0.0.0", port=8000)
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser(
+                prog='EventSync backend',
+                add_help=True,
+                description=None,
+                epilog=None)
+
+    parser.add_argument("-p", "--port",
+                        required=False,
+                        action="store",
+                        type=int,
+                        default=8000,
+                        help="specify port; default: 8000")
+
+    args = parser.parse_args()
+
+    uvicorn_run(app, host="0.0.0.0", port=args.port)
