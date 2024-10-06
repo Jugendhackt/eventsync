@@ -18,7 +18,7 @@ from sqlite_handler import SQLiteHandler
 from config import config
 
 
-def main():
+def db_init():
     Path(path_split(config["database_path"])[0]).mkdir(parents=True, exist_ok=True)
 
     with SQLiteHandler() as cur:
@@ -61,4 +61,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    db_init()

@@ -8,6 +8,11 @@ from sqlite_handler import SQLiteHandler
 from pydantic_models import Event
 from jwt_coder import jwt_encode, get_user_id, check_token_admin, check_token_admin_deco
 from hashing import to_hash
+from db_init import db_init
+
+
+# initialize the database (will not overwrite)
+db_init()
 
 
 app = FastAPI()
