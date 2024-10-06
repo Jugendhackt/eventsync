@@ -1,7 +1,6 @@
 """
 generate(encode), decode and verify contents of json-web-tokens (jwt)
 """
-
 import jwt
 from jwt.exceptions import ExpiredSignatureError, DecodeError
 
