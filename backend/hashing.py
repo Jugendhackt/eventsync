@@ -1,8 +1,6 @@
 from hashlib import sha256
+from get_secret import SECRET_KEY
 
-
-with open("secret_key", "rt", encoding="utf-8") as f:
-    SECRET_KEY = f.read()
 
 PEPPER = SECRET_KEY
 

@@ -5,10 +5,7 @@ import jwt
 from jwt.exceptions import ExpiredSignatureError, DecodeError
 
 from fastapi import Request, HTTPException
-
-
-with open("secret_key", "rt", encoding="utf-8") as f:
-    SECRET_KEY = f.read()
+from get_secret import SECRET_KEY
 
 
 def jwt_encode(data: dict):
