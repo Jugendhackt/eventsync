@@ -1,1 +1,1 @@
-export const LOAD_DATA_FROM_API = false;
+export const LOAD_DATA_FROM_API = true;

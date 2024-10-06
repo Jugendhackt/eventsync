@@ -73,7 +73,7 @@ const EventEntry = (props: { event: MapEvent }) => {
                 });
             });
         }else{
-            likeEvent(props.event.event_id, !liked).then(() => {
+            likeEvent("",props.event.event_id, !liked, ).then(() => {
                 setLiked(!liked);
             });
         }
