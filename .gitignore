@@ -55,5 +55,5 @@ next-env.d.ts
 
 
 # bun lock file
-/frontend/bun.lockb
+**/bun.lockb
 node_modules
