@@ -1,7 +1,11 @@
+from pathlib import Path
+
 from sqlite_handler import SQLiteHandler
 
 
 def main():
+    Path("./db").mkdir(parents=True, exist_ok=True)
+
     with SQLiteHandler() as cur:
         cur.executescript("""
                 CREATE TABLE IF NOT EXISTS events (
