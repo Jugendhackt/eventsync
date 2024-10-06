@@ -45,7 +45,6 @@ export const ManageUserList = (props: { loadData: () => Promise<User[]> }) => {
     useEffect(() => {
         props.loadData().then((data) => {
             setUsers(data);
-
             setLoading(false);
             setError(null);
         }).catch((error) => {
@@ -78,14 +77,14 @@ export const ManageUserList = (props: { loadData: () => Promise<User[]> }) => {
                 }
 
                 {
-                    !loading && !error && users.map((user) => <UserEntry user={user} deleted={() => {
+                    (!loading && !error && users) && users.map((user) => <UserEntry key={user.user_id} user={user} deleted={() => {
                         const newUsers = users.filter((u) => u.user_id !== user.user_id);
                         setUsers(newUsers);
                     }} />)
                 }
 
                 {
-                    !loading && !error && users.length === 0 && <p>Keine Nutzer vorhanden</p>
+                    (!loading && !error && users) && users.length === 0 && <p>Keine Nutzer vorhanden</p>
                 }
             </CardContent>
         </Card>);

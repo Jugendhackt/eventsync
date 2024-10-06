@@ -9,8 +9,8 @@ interface UserAccountState {
   }
 
 export const useAccount = create<UserAccountState>((set) => ({
-    username: window?.localStorage.getItem('username') || null,
-    isAdmin: (window?.localStorage.getItem('isAdmin')??"false") === 'true',
+    username: typeof window === "undefined"?null:window!.localStorage.getItem('username') || null,
+    isAdmin:  typeof window === "undefined"?false:(window?.localStorage.getItem('isAdmin')??"false") === 'true',
     setIsAdmin: (isAdmin: boolean) => {
         set((state) => ({ isAdmin: isAdmin, username: state.username }));
         if(isAdmin){

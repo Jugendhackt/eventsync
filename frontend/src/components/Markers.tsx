@@ -1,3 +1,4 @@
+"use client";
 import L from "leaflet";
 
 export const greenIcon = new L.Icon({

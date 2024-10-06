@@ -6,7 +6,7 @@ import { blueIcon, greenIcon, redIcon } from "./Markers";
 import { useLiked } from "@/zustand/likes";
 
 
-export const MapMarker = (props: { event: MapEvent}) => {
+ const MapMarker = (props: { event: MapEvent}) => {
 
 
   const { event, setEvent } = useEventSelection();
@@ -34,3 +34,5 @@ export const MapMarker = (props: { event: MapEvent}) => {
     </Marker>
   );
 }
+
+export default MapMarker;

@@ -1,7 +1,7 @@
 "use client";
 import { Marker, Popup } from 'react-leaflet';
 import dynamic from 'next/dynamic';
-import { useEffect, useMemo, useState } from 'react';
+import { lazy, useEffect, useMemo, useState } from 'react';
 import { Heart, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -19,7 +19,8 @@ import { loadDataFromDrizzle } from '@/server/dbAccess';
 import { MapEvent } from '@/server/schema';
 import { LOAD_DATA_FROM_API } from '@/dataSource';
 import { EventList } from '@/components/EventsList';
-import { MapMarker } from '@/components/MapMarker';
+const MapMarker = dynamic(() => import('@/components/MapMarker'));
+
 import { AD } from '@/components/ad';
 import { SearchBar } from '@/components/search-bar';
 import { LoginIndicator } from '@/components/LoginIndicator';
@@ -100,7 +101,7 @@ export default function Home() {
 
         <div className="flex flex-row gap-4 items-center">
           <Dialog open={openNewDialog} onOpenChange={setOpenNewDialog}>
-            <DialogTrigger><Button onClick={()=>setOpenNewDialog(true)} variant="outline">Neuer Eintrag</Button></DialogTrigger>
+            <DialogTrigger onClick={()=>setOpenNewDialog(true)}>Neuer Eintrag</DialogTrigger>
             <DialogContent className='h-2/3 overflow-scroll'>
               <DialogHeader>
                 <DialogTitle>Neuen Eintrag hinzufügen</DialogTitle>
