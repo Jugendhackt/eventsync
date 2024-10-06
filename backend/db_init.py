@@ -1,3 +1,16 @@
+"""
+Create directory /db, database and tables:
+
+events:
+- lat, lon, name, author, location, hrtime, deleteAfter,
+- time, website, description, createTime, event_id, verified
+event_tags:
+- tag, event_id
+users:
+- user_id, username, display_name, is_admin, hashed_password
+likes:
+- user_id, event_id
+"""
 from pathlib import Path
 
 from sqlite_handler import SQLiteHandler
