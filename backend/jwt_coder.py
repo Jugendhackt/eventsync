@@ -1,3 +1,6 @@
+"""
+generate(encode), decode and verify contents of json-web-tokens (jwt)
+"""
 import jwt
 from jwt.exceptions import ExpiredSignatureError, DecodeError
 
@@ -8,16 +11,16 @@ with open("secret_key", "rt", encoding="utf-8") as f:
     SECRET_KEY = f.read()
 
 
-def jwt_encode(data):
-    """takes data and secret and returns the token"""
+def jwt_encode(data: dict):
+    """Takes data and returns the token"""
     return jwt.encode(payload=data, key=SECRET_KEY)
 
 
 def jwt_decode(token, key):
-    """takes token and returns decoded data"""
+    """Takes token and returns decoded data"""
     try:
-        decoded = jwt.decode(token, key=key, algorithms=['HS256', ])
-        return decoded
+        data = jwt.decode(token, key=key, algorithms=['HS256', ])
+        return data
     except ExpiredSignatureError as e:
         print(f'Expired, error: {e}')
     except DecodeError as e:
@@ -25,14 +28,16 @@ def jwt_decode(token, key):
     return None
 
 
-def user_id_from_request(request):
+def get_user_id(request: Request):
+    """Extracts the user_id from the request"""
     token = request.headers.get("token")
     if token is None:
         return False
     return jwt_decode(token, SECRET_KEY).get("user_id")
 
 
-def check_token_admin(request):
+def check_token_admin(request: Request) -> bool:
+    """Checks if a user is admin from the request"""
     token = request.headers.get("token")
     if token is None:
         return False
@@ -44,6 +49,8 @@ def check_token_admin(request):
 
 def check_token_admin_deco(func):
     """
+    Checks if a user is admin from the request
+
     Decorated function must accept exactly two args:
     - request: Request
     - body: dict
