@@ -6,7 +6,7 @@ from uvicorn import run as uvicorn_run
 
 from sqlite_handler import SQLiteHandler
 from event import Event
-from jwt_coder import jwt_encode, user_id_from_request, check_token_admin, check_token_admin_deco
+from jwt_coder import jwt_encode, get_user_id, check_token_admin, check_token_admin_deco
 from hashing import to_hash
 
 
@@ -66,7 +66,7 @@ def create_event(event: Event):
 
 @app.post("/event/like")
 def like_event(request: Request, body: dict):
-    event_id, like, user_id = body["event_id"], body["like"], user_id_from_request(request)
+    event_id, like, user_id = body["event_id"], body["like"], get_user_id(request)
     with SQLiteHandler() as cur:
         cur.execute("DELETE FROM likes WHERE event_id = ? AND user_id = ?", (event_id, user_id))
         if like:
@@ -219,7 +219,7 @@ def create_user(user_data: dict):
 
 @app.get("/user/likes")
 def get_likes(request: Request):
-    user_id = user_id_from_request(request)
+    user_id = get_user_id(request)
     with SQLiteHandler() as cur:
         cur.execute("SELECT * FROM likes WHERE user_id=?", (user_id, ))
         return list(map(lambda x: x["event_id"], cur.fetchall()))
