@@ -38,7 +38,7 @@ def main():
                 CREATE TABLE IF NOT EXISTS likes (
                     user_id     TEXT NOT NULL,
                     event_id    TEXT NOT NULL,
-                    FOREIGN KEY (event_id) REFERENCES events(event_id)
+                    FOREIGN KEY (event_id) REFERENCES events(event_id),
                     FOREIGN KEY (user_id) REFERENCES events(event_id)
                 )
                 """)
