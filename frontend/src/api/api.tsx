@@ -1,17 +1,17 @@
 import { MapEvent, User } from "@/server/schema";
 
-const ip = "eventsync.auroraborealis.cloud";
+const ip = "http://10.42.2.88:8000";
 //const ip = "10.42.14.240";
 export const api = {
     read: async () => {
-        const response = await fetch("https://" + ip + "/events?search_filter={}")
+        const response = await fetch( ip + "/events?search_filter={}")
         if (Math.floor(response.status / 100) !== 2) {
             throw new Error();
         }
         return await response.json() satisfies MapEvent[];
     },
     create: async (event: MapEvent) => {
-        const response = await fetch("https://" + ip + "/events", {
+        const response = await fetch( ip + "/events", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -24,7 +24,7 @@ export const api = {
         return await response.json() satisfies MapEvent;
     },
     get_events_admin: async () => {
-        const response = await fetch("https://" + ip + "/admin?search_filter={}",
+        const response = await fetch( ip + "/admin?search_filter={}",
             {
                 method: 'GET',
                 headers: {
@@ -40,7 +40,7 @@ export const api = {
     },
 
     delete_event: async (id: string) => {
-        const response = await fetch("https://" + ip + "/admin?event_id=" + id, {
+        const response = await fetch( ip + "/admin?event_id=" + id, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export const api = {
     },
 
     verify_event: async (id: string) => {
-        const response = await fetch("https://" + ip + "/admin", {
+        const response = await fetch( ip + "/admin", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ export const api = {
     },
 
     login: async (username: string, password: string) => {
-        const response = await fetch("https://" + ip + "/login", {
+        const response = await fetch( ip + "/login", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -84,7 +84,7 @@ export const api = {
     },
 
     register: async (username: string, password: string, display_name: string) => {
-        const response = await fetch("https://" + ip + "/user/register", {
+        const response = await fetch( ip + "/user/register", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -99,7 +99,7 @@ export const api = {
     },
 
     listUsers: async ():Promise<User[]> => {
-        const response = await fetch("https://" + ip + "/admin/users", {
+        const response = await fetch( ip + "/admin/users", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ export const api = {
     },
 
     changeAdmin: async (user_id: string, is_admin: boolean) => {
-        const response = await fetch("https://" + ip + "/admin/op", {
+        const response = await fetch( ip + "/admin/op", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ export const api = {
     },
 
     deleteUser: async (user_id: string) => {
-        const response = await fetch("https://" + ip + "/admin/user", {
+        const response = await fetch( ip + "/admin/user", {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -143,7 +143,7 @@ export const api = {
     },
 
     likeEvent: async (event_id: string, like:boolean) => {
-        const response = await fetch("https://" + ip + "/event/like", {
+        const response = await fetch( ip + "/event/like", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -158,7 +158,7 @@ export const api = {
     },
 
     getLikedEvents: async () => {
-        const response = await fetch("https://" + ip + "/user/likes", {
+        const response = await fetch( ip + "/user/likes", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

@@ -191,7 +191,7 @@ export function CreateNewForm(props: {reloadCallback: () => void}) {
 
                     )}
                 />
-
+{ false&&
                 <FormField
                     control={form.control}
                     name="deleteAfter"
@@ -216,6 +216,7 @@ export function CreateNewForm(props: {reloadCallback: () => void}) {
 
                     )}
                 />
+}
 
                 {
                     !oneTimeEvent &&
