@@ -1,10 +1,10 @@
 import { MapEvent, User } from "@/server/schema";
 
-const ip = "10.42.2.88";
+const ip = "eventsync.auroraborealis.cloud";
 //const ip = "10.42.14.240";
 export const api = {
     read: async () => {
-        const response = await fetch("http://" + ip + ":8000/events?search_filter={}")
+        const response = await fetch("https://" + ip + ":8000/events?search_filter={}")
         if (Math.floor(response.status / 100) !== 2) {
             throw new Error();
         }

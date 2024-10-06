@@ -18,8 +18,6 @@ import {
     AlertTitle,
 } from "@/components/ui/alert"
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { TagsViewer } from "@/components/tag-input";
-import { Button } from "@/components/ui/button";
 import { LOAD_DATA_FROM_API } from "@/dataSource";
 import { changeAdmin, deleteEvent, deleteUser, verifyEvent } from "@/server/dbAccess";
 import { Switch } from "@/components/ui/switch"

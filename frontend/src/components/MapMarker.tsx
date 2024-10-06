@@ -16,9 +16,10 @@ import { useLiked } from "@/zustand/likes";
     setEvent(props.event);
   }
 
+  const icon = likes.includes(props.event.event_id??"")?redIcon:(event===props.event?blueIcon:greenIcon);
 
   return (
-    <Marker icon={event === props.event ? blueIcon : (likes.includes(props.event.event_id??"")?redIcon:greenIcon)} key={props.event.event_id} position={[props.event.lat, props.event.lon]} eventHandlers={{
+    <Marker icon={icon} key={props.event.event_id} position={[props.event.lat, props.event.lon]} eventHandlers={{
       click: handleClick,
       popupclose: () => {
         setEvent(null);

@@ -28,6 +28,7 @@ import { useAccount } from '@/zustand/userAccount';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLiked } from '@/zustand/likes';
 import Link from 'next/link';
+import Image from 'next/image';
 
 
 export default function Home() {
@@ -94,7 +95,7 @@ export default function Home() {
     <div className="w-full h-svh flex h-max-[100%] flex-col">
       <div className="w-full pt-4 pb-4 bg-slate-50 flex flex-row pl-10 pr-10 justify-between items-center">
         <div className='flex flex-row gap-2 items-center'>
-          <div>LOGO PLACEHOLDER</div>
+          <Image  src="/logo.png" width={40} height={40} alt={'Logo'} />
           <p className="text-xl font-bold">EventSync</p>
         </div>
 
