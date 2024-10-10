@@ -19,28 +19,49 @@ Our project - EventSync - provides a platform for event hosters and allows teens
 - Search/filter for events
 - Like your favourite events
 
-## How to start?
+## Starting
 
 This project is split into a Frontend and a Backend Server. 
-Maker sure to have all the requirements installed, before running both.
+Maker sure to have all the requirements installed 
+and the configurations set before running both.
 
 ### Frontend
 
+#### Initial
+
 - Make sure that [bun](https://bun.sh/) is installed.
-- Navigate to the frontend directory.
+- Navigate to the [frontend](./frontend) directory.
 - Install the requirements and run using:
   ```bash
   bun install
   bun run dev
   ```
 
+#### Later
+
+- Navigate to the [frontend](./frontend) directory.
+- Launch:
+  ```bash
+  bun run dev
+  ```
+
 ### Backend
 
+#### Initial
+
 - Make sure that [Python3](https://www.python.org/) is installed.
-- Navigate to the backend directory.
-- Install the requirements and launch.
+- Navigate to the [backend](./backend) directory.
+- Set configurations in [config.yaml](./backend/config.yaml)
+- Install the requirements and launch
   ```bash
   pip install -r requirements.txt
+  python main.py
+  ```
+
+#### Later
+- Navigate to the [backend](./backend) directory.
+- Launch: 
+  ```bash
   python main.py
   ```
 
