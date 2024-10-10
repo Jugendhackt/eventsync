@@ -152,7 +152,7 @@ def delete_event(request: Request, event_id: str):
 
 @app.post("/login")
 def login(login_data: dict):
-    password, username = login_data["password"], login_data["username"]
+    username, password = login_data["username"].lower(), login_data["password"]
 
     hashed_password = to_hash(password, salt=username)
 
@@ -184,7 +184,7 @@ def login(login_data: dict):
 
 @app.post("/user/register")
 def create_user(user_data: dict):
-    username, password = user_data["username"], user_data["password"]
+    username, password = user_data["username"].lower(), user_data["password"]
     display_name = user_data["display_name"]
 
     if display_name == "":
