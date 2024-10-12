@@ -71,4 +71,4 @@ and the configurations set before running both.
 - Merlin Pritlove (Mr. API aka Mr. Database)
 - Konstantin Winskowski (Mr. 422)
 - Emil Engelbert (Mr. Datensatz)
-- Julian (Mr. Präsentation)
+- Julian (Ms. Präsentation)
